@@ -4,15 +4,106 @@
 		<meta charset="UTF-8"/>
 		<title>Game Portfolio</title>
 		<style>
-			body {
+			html, body {
 				margin: 0;
+				padding: 0;
+				height 100%;
 			}
+
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color: #111;
+				font-family: sans-seriff;
+			}
+
+			.layout {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 1rem;
+				width: 100%;
+			}
+
+			.banner {
+				width: 100%;
+				max-width: 1100px;
+				background-color: #222;
+				color: white;
+				padding 1rem;
+				text-align: center;
+				font-size: 1.5rem;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+			}
+
+			.container {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+				gap: 1rem;
+			}
+
+			.panel {
+				width: 300px;
+				height: 600px;
+				background-color: #333;
+				padding: 1rem;
+				box-sizing: border-box;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+
+			.block {
+				flex: 1;
+				padding: 10px;
+				border-bottom: 1px solid #555;
+				text-align: center;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.game-wrapper {
+				width: 800px;
+				height: 600px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background:black;
+			}
+
 			canvas {
 				display: block;
 			}
+
 		</style>
 	</head>
 	<body>
+		<div class="layout">	
+			<div class="banner">
+				TRU HAWKINS
+			</div>
+
+			<div class="container">
+				<div id="left-panel" class="panel">
+					<div id="gameTitle" class="block" style="font-size:24px;"></div>
+					<div id="gameDescription" class="block"></div>
+					<div id="technologies" class="block"></div>
+				</div>
+
+				<div class="game-wrapper" id="game-wrapper">
+					<!-- Phaser canvas here -->
+				</div>
+
+				<div id="right-panel" class="panel">
+					<a id="gameLink" href=""></a>
+					<div id="collaborators"></div>
+				</div>
+			</div>
+
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>

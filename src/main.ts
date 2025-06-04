@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 import Player from './player';
-import Planet from './planet';
+import * as planet from './planet';
 
 class MainScene extends Phaser.Scene {
 	private player!: Player;
@@ -36,7 +36,8 @@ class MainScene extends Phaser.Scene {
 
 		this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 	
-		const gloryPlanet = new Planet(this, 400, 1000, 'gloryDogs', this.player);
+		//const gloryPlanet = new Planet(this, 400, 1000, 'gloryDogs', this.player);
+		const gloryPlanet = new planet.GloryDogs(this, 400, 1000, this.player);
 		/*
 		this.physics.add.collider(this.player, gloryPlanet, () => {
 			console.log('Collision!');
@@ -58,6 +59,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 	type: Phaser.AUTO,
 	width: 800,
 	height: 600,
+	parent: 'game-wrapper',
 	physics: {
 		default: 'arcade',
 		arcade: {
