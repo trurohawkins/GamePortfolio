@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export class Planet extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Video {
+export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Video {
 	
 	constructor(scene: Phaser.Scene, x: number, y: number, videoKey: string, player: Phaser.Physics.Arcade.Sprite) {
 		super(scene, x, y, '');
@@ -45,7 +45,7 @@ export class Planet extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.V
 	}
 }
 
-export class GloryDogs extends Planet{
+export class GloryDogs extends Cloud {
 	constructor(scene: Phaser.Scene, x: number, y: number, player: Phaser.Physics.Arcade.Sprite) {
 		super(scene, x, y, 'gloryDogs', player);
 		this.title = "GloryDogs"
