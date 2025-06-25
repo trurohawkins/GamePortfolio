@@ -5,6 +5,7 @@ import * as cloud from './cloud';
 
 const worldSize: number = 2000;
 const worldCam: boolean = false;
+//worldCam supdercedes whipCam
 const whipCam: boolean = false;
 
 class MainScene extends Phaser.Scene {
@@ -27,7 +28,7 @@ class MainScene extends Phaser.Scene {
 		
 		//homeBase.setDisplaySize(600, 600);
 		const homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'player');
-		homeBase.setScale(5);
+		homeBase.setScale(7);
 		homeBase.body.setCircle(homeBase.width * 0.43);
 		homeBase.body.setOffset(2, 3);
 		homeBase.body.moves = false;
@@ -37,7 +38,7 @@ class MainScene extends Phaser.Scene {
 		this.physics.world.setBounds(0, 0, worldSize, worldSize);
 		//this.cameras.main.setBounds(0, 0, worldSize, worldSize);
 
-		this.player = new Player(this, worldSize/2, worldSize - 200, 'player');
+		this.player = new Player(this, worldSize/2, worldSize/2 - (homeBase.displayWidth/2), 'player');
 		this.player.setHome(homeBase);//worldSize/2, worldSize/2);
 		this.physics.add.collider(this.player, homeBase);//, this.player.homeCollide, undefined, this);/*, () => {
 
@@ -54,7 +55,7 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
-		//const gloryCloud = new cloud.GloryDogs(this, 400, 1000, this.player);
+		//const gloryCloud = new cloud.GloryDogs(this, worldSize/2, 1000, this.player);
 		/*
 		this.physics.add.collider(this.player, gloryCloud, () => {
 			console.log('Collision!');
@@ -96,19 +97,41 @@ class MainScene extends Phaser.Scene {
 	}
 }
 
+const wrapper = document.getElementById('game-wrapper')!;
+const width = wrapper.clientWidth;
+const height = wrapper.clientHeight;
+
+let game: Phaser.Game;
+
 const config: Phaser.Types.Core.GamesConfig = {
 	type: Phaser.AUTO,
-	width: 800,
-	height: 600,
+	//width: width,
+	//height: height,
 	parent: 'game-wrapper',
+	scale: {
+		mode: Phaser.Scale.RESIZE,
+		autoCenter: Phaser.Scale. CENTER_BOTH,
+		width: '100%',
+		height: '100%',
+	},
 	physics: {
 		default: 'arcade',
 		arcade: {
-			debug: true
+			debug: false
 		}
 	},
 	scene: MainScene,
 	backgroundColor: '#2d2d2d',
 };
 
-new Phaser.Game(config);
+game = new Phaser.Game(config);
+/*
+window.addEventListener('resize', () => {
+	const wrapper = document.getElementById('game-wrapper')!;
+	const width = wrapper.clientWidth;
+	const height = wrapper.clientHeight;
+	console.log(width + ", " + height);
+	game.scale.resize(width, height);
+});
+*/
+

@@ -7,7 +7,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	private accel: number = 0;
 	private decel: number = 5;
 
-	private gravity: number = 50;
+	private gravity: number = 500;
+	private gravAccel: number = 1;
 	private pull: number = 0;
 	private grounded: boolean = false;
 	private home?: Phaser.Physics.Arcade.Image;
@@ -16,6 +17,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	private rotMax = 3
 	private rotAccel = 0.1;
 	private rotDecel = 0.005;
+
+	// when we stop inputting for rotation we pause be for drifting back to planet rotation
+	private rotInput: number = 0;
+	private rotPause: number = 15;
+	//speed at which we rotate back to planet
+	private rotDrift: number = 0.01;
 
 	private keys!: {
 		up: Phaser.Input.Keyboard.Key,
@@ -48,23 +55,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	update() {
 		//this.scene.physics.world.wrap(this, 0);
 		if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
-		//if (this.keys.left?.isDown) {
-			//this.setVelocityX(-this.accel);
+			this.rotInput = this.rotPause;
 			if (this.rotSpd - this.rotAccel > -this.rotMax) {
 				this.rotSpd -= this.rotAccel;
 			} else {
 				this.rotSpd = -this.rotMax;
 			}
-			//this.rotation -= 0.1
 		} else if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
-		//} else if (this.keys.right?.isDown) {
+			this.rotInput = this.rotPause;
 			if (this.rotSpd + this.rotAccel < this.rotMax) {
 				this.rotSpd += this.rotAccel;
 			} else {
 				this.rotSpd = this.rotMax;
 			}
-			//this.rotation += 0.1
-			//this.setVelocityX(this.accel);
 		} else {
 			if (this.rotSpd != 0) {
 				let dir = Math.sign(this.rotSpd);
@@ -75,9 +78,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 				}
 			}
 		}
-		this.rotation += this.rotSpd;
-		const curAccel = this.accel / this.accelMax;
+		if (this.rotSpd != 0) {
+			this.rotation += this.rotSpd;
+		} else {
+			if (this.rotInput > 0) {
+				this.rotInput--;
+			} else {
+				// rotate towards home
+				let angle = Phaser.Math.Angle.Between(this.x, this.y, this.home.x, this.home.y);
+				angle += Phaser.Math.DegToRad(-90);
+				this.rotation = Phaser.Math.Angle.RotateTo(this.rotation, angle, this.rotDrift);
+			}
+		}
 
+		const curAccel = this.accel / this.accelMax;
 		if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
 			// the faster we are going the less boost we add
 			const boost = Phaser.Math.Linear(this.boost, this.boost/100, curAccel);
@@ -86,6 +100,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			} else {
 				this.accel = this.accelMax;
 			}
+			this.pull = 0;
 		} else {
 			if (this.accel - this.decel > 0) {
 				this.accel -= this.decel;
@@ -96,9 +111,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		const dist = Phaser.Math.Distance.Between(this.x, this.y, this.home.x, this.home.y);
 		// 5 buffer needed, could be 3 maybe change with size
 		if (dist < this.home.displayWidth/2 + 5) {
-			this.pull = 0;
+			if (!this.grounded) {
+				this.pull = 0;
+				this.grounded = true;
+			}
 		} else {
-			this.pull = this.gravity;//Phaser.Math.Linear(0, this.gravity, 1-curAccel);
+			this.grounded = false;
+			if (this.pull + this.gravAccel < this.gravity) {
+				this.pull += this.gravAccel;
+			} else {
+				this.pull = this.gravity;//Phaser.Math.Linear(0, this.gravity, 1-curAccel);
+			}
 		}
 		const pos = new Phaser.Math.Vector2(this.x, this.y); 
 		const home = new Phaser.Math.Vector2(this.home.x, this.home.y);
@@ -115,29 +138,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		//this.body.velocity.x = rotDir.x * this.accel;
 		this.setVelocity((rotDir.x * this.accel) + homeDir.x, (rotDir.y * this.accel) + homeDir.y);
 
-		/*
-		const curSpd = Math.abs(this.body.velocity.y)
-		if (curSpd > 0) {
-			if (curSpd - this.decel <= 0) {
-				this.body.velocity.y = 0
-			} else {
-				this.body.velocity.y -= Math.sign(this.body.velocity.y) * this.decel
-			}
-		}
-		*/
-/*
-		else if (this.keys.down?.JustDown) {
-			this.body.velocity.y += this.accel;
-		}
-		if (this.keys.up?.JustDown) {
-			this.body.velocity.y -= this.accel;
-		} else if (this.keys.down?.JustDown) {
-			this.body.velocity.y += this.accel;
-		}
-	*/
 	}
 
 	public setHome(home: Phaser.Physics.Arcade.Image) {
 		this.home = home;//new Phaser.Math.Vector2(home.x, home.y);
 	}
+
+	private onHomeCollide(home: Phaser.GameObjects.GameObject, self: Phaser.GameObjects.GameObject) {
+		console.log("landed");
+	}
 }
+
