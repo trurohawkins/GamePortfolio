@@ -3,8 +3,8 @@ import Phaser from 'phaser';
 import Player from './player';
 import * as cloud from './cloud';
 
-const worldSize: number = 2000;
-const worldCam: boolean = false;
+export const worldSize: number = 2000;
+const worldCam: boolean = true;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 
@@ -55,7 +55,7 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
-		//const gloryCloud = new cloud.GloryDogs(this, worldSize/2, 1000, this.player);
+		this.gloryCloud = new cloud.GloryDogs(this, 90, 500, this.player);
 		/*
 		this.physics.add.collider(this.player, gloryCloud, () => {
 			console.log('Collision!');
@@ -70,6 +70,7 @@ class MainScene extends Phaser.Scene {
 
 	update() {
 		this.player.update()
+		this.gloryCloud.update()
 		const cam = this.cameras.main;
 
 		if (this.player.x < 0) {
@@ -117,7 +118,8 @@ const config: Phaser.Types.Core.GamesConfig = {
 	physics: {
 		default: 'arcade',
 		arcade: {
-			debug: false
+			debug: 
+				true
 		}
 	},
 	scene: MainScene,

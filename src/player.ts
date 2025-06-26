@@ -24,6 +24,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	//speed at which we rotate back to planet
 	private rotDrift: number = 0.01;
 
+	public watching: boolean = false;
+
 	private keys!: {
 		up: Phaser.Input.Keyboard.Key,
 		down: Phaser.Input.Keyboard.Key,
@@ -41,6 +43,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.setCollideWorldBounds(false);
 		const radius = Math.min(this.width, this.height) / 2;
 		this.body.setCircle(radius);
+		this.setDepth(1);
 
 		this.cursors = scene.input.keyboard.createCursorKeys();
 		this.keys = {
@@ -53,6 +56,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	update() {
+		if (this.watching) {
+			if (Phaser.Input.Keyboard.JustDown(this.keys.right) || Phaser.Input.Keyboard.JustDown(this.keys.left) || Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+				this.watching = false;
+			} else {
+				return;
+			}
+		}
 		//this.scene.physics.world.wrap(this, 0);
 		if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
 			this.rotInput = this.rotPause;
@@ -138,6 +148,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		//this.body.velocity.x = rotDir.x * this.accel;
 		this.setVelocity((rotDir.x * this.accel) + homeDir.x, (rotDir.y * this.accel) + homeDir.y);
 
+	}
+
+	public watchVideo() {
+		this.setVelocity(0, 0);
+		this.accel = 0;
+		this.rotSpd = 0;
+		this.pull = 0;
+		this.watching = true;
 	}
 
 	public setHome(home: Phaser.Physics.Arcade.Image) {
