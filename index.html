@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 		<meta charset="UTF-8"/>
 		<title>Game Portfolio</title>
 		<style>
@@ -14,8 +15,8 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				background-color: #111;
-				font-family: sans-seriff;
+				background-color: #000;
+				font-family: 'Roboto', sans-seriff;
 			}
 
 			.layout {
@@ -35,6 +36,7 @@
 				text-align: center;
 				font-size: 1.5rem;
 				box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+				font-family: 'Orbitron', san-seriff;
 			}
 
 			.container {
@@ -50,22 +52,42 @@
 			.panel {
 				width: 20vw;
 				height: 100%;
-				background-color: #333;
+				background-color: #000;
 				padding: 1rem;
 				box-sizing: border-box;
+				border-radius: 8px;
+
 				overflow-y: auto;
 				display: flex;
 				flex-direction: column;
-				gap: 0.5rem;
+				gap: 1rem;
 			}
 
-			.block {
+			.offBlock {
+				display: flex;
 				flex: 1;
 				padding: 10px;
-				border-bottom: 1px solid #555;
 				text-align: center;
 				justify-content: center;
 				align-items: center;
+			}
+
+			.block {
+				display: flex;
+				flex: 1;
+				padding: 20px;
+				border: 3px solid #666;
+				border-radius: 8px;
+				background: #444;
+				text-align: center;
+				justify-content: center;
+				align-items: center;
+				color: #999;
+			}
+
+			#gameTitle {
+				flex: 0 0 auto;
+				font-family: 'Orbitron', san-seriff;
 			}
 
 			.game-wrapper {
@@ -73,9 +95,10 @@
 				height: 100%;
 				position:relative;
 				display: flex;
+
 				justify-content: center;
 				align-items: center;
-				background:black;
+				background: black;
 			}
 
 			canvas {
@@ -94,9 +117,9 @@
 
 			<div class="container">
 				<div id="left-panel" class="panel">
-					<div id="gameTitle" class="block" style="font-size:24px;"></div>
-					<div id="gameDescription" class="block"></div>
-					<div id="technologies" class="block"></div>
+					<div id="gameTitle" class="offBlock" style="font-size:24px;"></div>
+					<div id="gameDescription" class="offBlock"></div>
+					<div id="technologies" class="offBlock"></div>
 				</div>
 
 				<div class="game-wrapper" id="game-wrapper">
@@ -104,8 +127,10 @@
 				</div>
 
 				<div id="right-panel" class="panel">
+					<div id="page" class="offBlock">
 					<a id="gameLink" href=""></a>
-					<div id="collaborators"></div>
+					</div>
+					<div id="collaborators" class="offBlock"></div>
 				</div>
 			</div>
 

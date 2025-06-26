@@ -4,7 +4,7 @@ import Player from './player';
 import * as cloud from './cloud';
 
 export const worldSize: number = 2000;
-const worldCam: boolean = true;
+const worldCam: boolean = false;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 
@@ -24,7 +24,7 @@ class MainScene extends Phaser.Scene {
 
 	create() {
 		//const worldSize = 2000;
-	 	this.add.tileSprite(0, 0, worldSize, worldSize, 'background').setOrigin(0);
+	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
 		
 		//homeBase.setDisplaySize(600, 600);
 		const homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'player');
@@ -115,6 +115,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 		width: '100%',
 		height: '100%',
 	},
+	backgroundColor:'#00000',
 	physics: {
 		default: 'arcade',
 		arcade: {
@@ -123,7 +124,6 @@ const config: Phaser.Types.Core.GamesConfig = {
 		}
 	},
 	scene: MainScene,
-	backgroundColor: '#2d2d2d',
 };
 
 game = new Phaser.Game(config);

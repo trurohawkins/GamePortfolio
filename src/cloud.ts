@@ -16,13 +16,22 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 
 		this.video = scene.add.video(x, y, videoKey)
 		this.video.setScale(0.5);
+		this.video.setLoop(false);
 		this.video.video.loop = false;//setLoop(false);
-		this.video.video.playbackRate = 3;
+		this.video.video.playbackRate = 5;
 		this.video.video.addEventListener('ended', this.onVideoComplete.bind(this));
 		this.video.setDepth(0);
 
-		//this.video.play(true);
 		this.setSize(this.video.displayWidth, this.video.displayHeight);
+		/*
+		this.video.video.addEventListener('loadedmetadata', () => {
+			const vWidth = this.video.video.videoWidth;
+			const vHeight = this.video.video.videoHeight;
+			this.video.setDisplaySize(100, 100);//vWidth/10, vHeight/10);
+		});
+		*/
+
+		//this.video.play(false);
 		//this.setOffset(-this.displayWidth/2, -this.displayHeight/2);
 		this.setImmovable(true);
 		
@@ -49,17 +58,32 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 		player.watchVideo();
 		this.video.setVisible(true);
 		this.video.play(false);
+		const leftPanel = document.getElementById('left-panel');
+		if (leftPanel) {
+			leftPanel.style.backgroundColor = '#333';
+		}
 		const gameTitle = document.getElementById('gameTitle');
 		if (gameTitle) {
 			gameTitle.textContent = this.title;
+			gameTitle.className = 'block';
 		}
 		const gameDescription = document.getElementById('gameDescription');
 		if (gameDescription) {
 			gameDescription.textContent = this.description;
+			gameDescription.className = 'block';
 		}
 		const technologies = document.getElementById('technologies');
 		if (technologies) {
 			technologies.textContent = this.tech;
+			technologies.className = 'block'; 
+		}
+		const rightPanel = document.getElementById('right-panel');
+		if (rightPanel) {
+			rightPanel.style.backgroundColor = '#333';
+		}
+		const page = document.getElementById('page');
+		if (page) {
+			page.className = 'block';
 		}
 		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
 		if (gameLink) {
@@ -70,13 +94,25 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 		const collaborators = document.getElementById('collaborators');
 		if (collaborators) {
 			collaborators.textContent = this.collaborators;
+			collaborators.className = 'block'; 
 		}
 	}
 
 	private onVideoComplete() {
 		console.log("video over");
-		this.video.setVisible(false);
-		this.video.video.currentTime = 0;
+		// maybe adjust for different videos
+		this.video.video.currentTime = this.video.video.duration - 1.05;
+		this.scene.tweens.add({
+			targets: this.video,
+			alpha: 0,
+			duration: 500,
+			ease: 'Linear',
+			onComplete: () => {
+				this.video.setVisible(false);
+				this.video.video.currentTime = 0;
+				this.video.alpha = 1;
+			}
+		});
 		this.player.watching = false;
 	}
 }
