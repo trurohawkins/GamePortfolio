@@ -1,28 +1,24 @@
 import Phaser from 'phaser';
 import { worldSize } from './main';
 
-export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Video {
+export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Video {
 	private player: Phaser.Physics.Arcade.Sprite;
 	private overlapping: boolean = false;
-		
-	constructor(scene: Phaser.Scene, angle: number, distance: number, videoKey: string, player: Phaser.Physics.Arcade.Sprite) {
+	private scene: Phaser.Scene;
+	private archive: Archive;
+	private set: boolean = false;
+
+	constructor(scene: Phaser.Scene, angle: number, distance: number, player: Phaser.Physics.Arcade.Sprite, archive: Archive) {
 
 		const rad = Phaser.Math.DegToRad(angle);
 		const x = worldSize/2 + Math.cos(rad) * distance;
 		const y = worldSize/2 - Math.sin(rad) * distance;
 		super(scene, x, y, '');
+		this.scene = scene;
+		this.archive = archive;
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
 
-		this.video = scene.add.video(x, y, videoKey)
-		this.video.setScale(0.5);
-		this.video.setLoop(false);
-		this.video.video.loop = false;//setLoop(false);
-		this.video.video.playbackRate = 5;
-		this.video.video.addEventListener('ended', this.onVideoComplete.bind(this));
-		this.video.setDepth(0);
-
-		this.setSize(this.video.displayWidth, this.video.displayHeight);
 		/*
 		this.video.video.addEventListener('loadedmetadata', () => {
 			const vWidth = this.video.video.videoWidth;
@@ -51,7 +47,29 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 		this.overlapping = curOverlap;
 	}
 
+	public setVideo(file: VideFile) {
+		this.title = file.title;
+		this.description = file.description;
+		this.tech = file.tech;
+		this.gameLink = file.gameLink;
+		this.collaborators = file.collaborators;
+
+		this.video = this.scene.add.video(this.x, this.y, file.key)
+		this.video.setScale(0.5);
+		this.video.setLoop(false);
+		this.video.video.loop = false;//setLoop(false);
+		//this.video.video.playbackRate = 5;
+		this.video.video.addEventListener('ended', this.onVideoComplete.bind(this));
+		this.video.setDepth(0);
+
+		this.setSize(this.video.displayWidth, this.video.displayHeight);
+	}
+
 	private onPlayerCollide(player: Phaser.GameObjects.GameObject, self: Phaser.GameObjects.GameObject) {
+		if (!this.set) {
+			this.setVideo(this.archive.getVideo());
+			this.set = true;
+		}
 		if (this.video.video.currentTime != 0) {
 			return;
 		}
@@ -101,11 +119,11 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 	private onVideoComplete() {
 		console.log("video over");
 		// maybe adjust for different videos
-		this.video.video.currentTime = this.video.video.duration - 1.05;
+		//this.video.video.currentTime = this.video.video.duration - 0.05;
 		this.scene.tweens.add({
 			targets: this.video,
 			alpha: 0,
-			duration: 500,
+			duration: 1000,
 			ease: 'Linear',
 			onComplete: () => {
 				this.video.setVisible(false);
@@ -113,6 +131,8 @@ export class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameObjects.Vi
 				this.video.alpha = 1;
 			}
 		});
+		//this.video.video.currentTime = 0;
+		//this.video.setVisible(false);
 		this.player.watching = false;
 	}
 }

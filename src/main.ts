@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 
 import Player from './player';
-import * as cloud from './cloud';
+import Archive from './archive';
+import Cloud from './cloud';
 
 export const worldSize: number = 2000;
 const worldCam: boolean = false;
@@ -9,7 +10,10 @@ const worldCam: boolean = false;
 const whipCam: boolean = false;
 
 class MainScene extends Phaser.Scene {
+	
 	private player!: Player;
+	private clouds: Cloud[] = [];
+
 	constructor() {
 		super('main');
 	}
@@ -55,7 +59,8 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
-		this.gloryCloud = new cloud.GloryDogs(this, 90, 500, this.player);
+		this.archive = new Archive(this);
+		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		/*
 		this.physics.add.collider(this.player, gloryCloud, () => {
 			console.log('Collision!');
@@ -69,8 +74,10 @@ class MainScene extends Phaser.Scene {
 	}
 
 	update() {
-		this.player.update()
-		this.gloryCloud.update()
+		this.player.update();
+		for (let i = 0; i < this.clouds.length; i++) {
+			this.clouds[i].update();
+		}
 		const cam = this.cameras.main;
 
 		if (this.player.x < 0) {
