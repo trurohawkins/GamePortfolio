@@ -6,7 +6,7 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 	private overlapping: boolean = false;
 	private scene: Phaser.Scene;
 	private archive: Archive;
-	private set: boolean = false;
+	private file?: VidFile;
 
 	constructor(scene: Phaser.Scene, angle: number, distance: number, player: Phaser.Physics.Arcade.Sprite, archive: Archive) {
 
@@ -52,76 +52,36 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 	}
 
 	public setVideo(file: VidFile) {
-		this.title = file.title;
-		this.description = file.description;
-		this.tech = file.tech;
-		this.gameLink = file.gameLink;
-		this.collaborators = file.collaborators;
-
-		this.video = this.scene.add.video(this.x, this.y, file.key)
+		this.file = file;
+		this.video = this.scene.add.video(this.x, this.y, file.key);
 		this.video.setScale(file.scale);
 		this.video.setLoop(false);
 		this.video.video.loop = false;//setLoop(false);
 		this.video.video.playbackRate = 5;
 		this.video.video.addEventListener('ended', this.onVideoComplete.bind(this));
 		this.video.setDepth(0);
-
 		//this.setSize(this.video.displayWidth, this.video.displayHeight);
 	}
 
+	public resetVideo() {
+		this.video.setVisible(false);
+		this.video.video.currentTime = 0;
+		this.video.alpha = 1;
+	}
+
 	private onPlayerCollide(player: Phaser.GameObjects.GameObject, self: Phaser.GameObjects.GameObject) {
-		if (!this.set) {
+		if (this.file === undefined) {
 			this.setVideo(this.archive.getVideo());
-			this.set = true;
-		}
-		if (this.video.video.currentTime != 0) {
+		} else if (this.video.video.currentTime != 0) {
+			console.log("video time not done " + this.video.video.currentTime);
 			return;
 		}
 		player.watchVideo();
-		this.video.setVisible(true);
-		this.video.play(false);
-		const leftPanel = document.getElementById('left-panel');
-		if (leftPanel) {
-			leftPanel.style.backgroundColor = '#333';
-		}
-		const gameTitle = document.getElementById('gameTitle');
-		if (gameTitle) {
-			gameTitle.textContent = this.title;
-			gameTitle.className = 'block';
-		}
-		const gameDescription = document.getElementById('gameDescription');
-		if (gameDescription) {
-			gameDescription.textContent = this.description;
-			gameDescription.className = 'block';
-		}
-		const technologies = document.getElementById('technologies');
-		if (technologies) {
-			technologies.textContent = this.tech;
-			technologies.className = 'block'; 
-		}
-		const rightPanel = document.getElementById('right-panel');
-		if (rightPanel) {
-			rightPanel.style.backgroundColor = '#333';
-		}
-		const page = document.getElementById('page');
-		if (page) {
-			page.className = 'block';
-		}
-		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
-		if (gameLink) {
-			gameLink.textContent = "Game Page";
-			gameLink.href = this.gameLink;
-			gameLink.target = "_blank";
-		}
-		const collaborators = document.getElementById('collaborators');
-		if (collaborators) {
-			collaborators.textContent = this.collaborators;
-			collaborators.className = 'block'; 
-		}
+		this.archive.playVideo(this);
+		this.archive.setVidInfo(this.file);
 	}
 
 	private onVideoComplete() {
-		console.log("video over");
 		// maybe adjust for different videos
 		//this.video.video.currentTime = this.video.video.duration - 0.05;
 		this.scene.tweens.add({
@@ -130,9 +90,7 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 			duration: 1000,
 			ease: 'Linear',
 			onComplete: () => {
-				this.video.setVisible(false);
-				this.video.video.currentTime = 0;
-				this.video.alpha = 1;
+				this.resetVideo();
 			}
 		});
 		//this.video.video.currentTime = 0;

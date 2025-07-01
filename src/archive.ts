@@ -22,6 +22,7 @@ export default class Archive {
 
 	private videos: VidFile[] = [];		
 	private cur: number = 0;	
+	private curCloud?: cloud;
 
 	constructor(scene: Phaser.Scene) {
 		scene.add.existing(this);
@@ -100,6 +101,57 @@ export default class Archive {
 		`
 		const roll = new VidFile("ROHLB", "Roll On Home Little Buddy", rollDesc, "Unity", "_", rollTeam);
 		this.videos.push(roll);
+	}
+
+	public setVidInfo(file: VidFile) {
+		const leftPanel = document.getElementById('left-panel');
+		if (leftPanel) {
+			leftPanel.style.backgroundColor = '#333';
+		}
+		const gameTitle = document.getElementById('gameTitle');
+		if (gameTitle) {
+			gameTitle.textContent = file.title;
+			gameTitle.className = 'block';
+		}
+		const gameDescription = document.getElementById('gameDescription');
+		if (gameDescription) {
+			gameDescription.textContent = file.description;
+			gameDescription.className = 'block';
+		}
+		const technologies = document.getElementById('technologies');
+		if (technologies) {
+			technologies.textContent = file.tech;
+			technologies.className = 'block'; 
+		}
+		const rightPanel = document.getElementById('right-panel');
+		if (rightPanel) {
+			rightPanel.style.backgroundColor = '#333';
+		}
+		const page = document.getElementById('page');
+		if (page) {
+			page.className = 'block';
+		}
+		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
+		if (gameLink) {
+			gameLink.textContent = "Game Page";
+			gameLink.href = file.gameLink;
+			gameLink.target = "_blank";
+		}
+		const collaborators = document.getElementById('collaborators');
+		if (collaborators) {
+			collaborators.textContent = file.collaborators;
+			collaborators.className = 'block'; 
+		}
+	}
+
+	public playVideo(cloud: Cloud) {
+		if (this.curCloud !== undefined) {
+			this.curCloud.video.stop();
+			this.curCloud.resetVideo();
+		}
+		this.curCloud = cloud;
+		cloud.video.setVisible(true);
+		cloud.video.play(false);
 	}
 
 	public getVideo() {
