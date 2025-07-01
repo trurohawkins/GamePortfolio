@@ -97,7 +97,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 				// rotate towards home
 				let angle = Phaser.Math.Angle.Between(this.x, this.y, this.home.x, this.home.y);
 				angle += Phaser.Math.DegToRad(-90);
-				this.rotation = Phaser.Math.Angle.RotateTo(this.rotation, angle, this.rotDrift);
+				//this.rotation = Phaser.Math.Angle.RotateTo(this.rotation, angle, this.rotDrift);
 			}
 		}
 
