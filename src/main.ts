@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-
+import {PreloadScene} from './preload';
 import Player from './player';
 import Archive from './archive';
 import Cloud from './cloud';
@@ -16,18 +16,6 @@ class MainScene extends Phaser.Scene {
 
 	constructor() {
 		super('main');
-	}
-
-	//probably should add a preloader scene
-	preload() {
-		this.load.image('player', '/assets/playerHead.png'); // path is relative to public root
-		this.load.image('background', '/assets/skyBG.png');
-		this.load.image('pizza', '/assets/pizza.png');
-		this.load.video('gloryDogs', 'assets/trailers/gloryDogsTrailer.mp4');//, 'loadeddata', true, true);
-		this.load.video('stroid', 'assets/trailers/StroidTrailer.mp4');
-		this.load.video('trembles', 'assets/trailers/tremblesTrailer.mp4');
-		this.load.video('peepeeMadness', 'assets/trailers/PPMadnessTrailer.mp4');
-		this.load.video('ROHLB', 'assets/trailers/RollOnHomeLittleBuddy.mp4');
 	}
 
 	create() {
@@ -154,7 +142,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 				true
 		}
 	},
-	scene: MainScene,
+	scene: [PreloadScene, MainScene],
 };
 
 game = new Phaser.Game(config);
