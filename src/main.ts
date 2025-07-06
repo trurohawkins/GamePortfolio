@@ -3,9 +3,10 @@ import {PreloadScene} from './preload';
 import Player from './player';
 import Archive from './archive';
 import Cloud from './cloud';
+import Shot from './shot';
 
 export const worldSize: number = 3000;
-const worldCam: boolean = false;
+const worldCam: boolean = true;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 
@@ -57,6 +58,12 @@ class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
+
+		this.archive.placeShot(0, worldSize/2, worldSize/2 - 400);
+		this.archive.placeShot(1, worldSize/2, worldSize/2 - 800);
+		this.archive.placeShot(2, worldSize/2, worldSize/2);
+		this.archive.placeShot(3, worldSize/2, worldSize/2 + 400);
+		this.archive.placeShot(4, worldSize/2, worldSize/2 + 800);
 		/*
 		this.physics.add.collider(this.player, gloryCloud, () => {
 			console.log('Collision!');
@@ -70,10 +77,12 @@ class MainScene extends Phaser.Scene {
 	}
 
 	update() {
-		this.player.update();
 		for (let i = 0; i < this.clouds.length; i++) {
 			this.clouds[i].update();
 		}
+		this.archive.update();
+		
+		this.player.update();
 		const cam = this.cameras.main;
 		const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
 		if (dist > worldSize/2) {
@@ -90,30 +99,6 @@ class MainScene extends Phaser.Scene {
 			}
 			console.log(this.player.x + ", " + this.player.y);
 		}
-		/*
-		if (this.player.x < 0) {
-			this.player.x += worldSize;
-			if (!worldCam && !whipCam) {
-				cam.scrollX += worldSize;
-			}
-		} else if (this.player.x > worldSize) {
-			this.player.x -= worldSize;
-			if (!worldCam && !whipCam) {
-				cam.scrollX -= worldSize;
-			}
-		}
-		if (this.player.y < 0) {
-			this.player.y += worldSize;
-			if (!worldCam && !whipCam) {
-				cam.scrollY += worldSize;
-			}
-		} else if (this.player.y > worldSize) {
-			this.player.y -= worldSize;
-			if (!worldCam && !whipCam) {
-				cam.scrollY -= worldSize;
-			}
-		}
-		*/
 	}
 }
 

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Shot from './shot';
 
 class VidFile {
 	public key: string;
@@ -20,7 +21,9 @@ class VidFile {
 
 export default class Archive {
 
-	private videos: VidFile[] = [];		
+	private videos: VidFile[] = [];
+	private shots: Shot[] = [];
+
 	private cur: number = 0;	
 	private curCloud?: cloud;
 
@@ -35,6 +38,7 @@ export default class Archive {
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
 		gloryDogs.scale = 0.5;	
 		this.videos.push(gloryDogs);
+		this.shots.push(new Shot(scene, 'gd', 5));
 
 		const stroidDesc = 
 			`
@@ -51,6 +55,7 @@ export default class Archive {
 		`
 		const stroid = new VidFile("stroid", "Stroid", stroidDesc, "Unity", "_", stroidTeam);
 		this.videos.push(stroid);
+		this.shots.push(new Shot(scene, 'stroid', 6));
 
 		const tremblesDesc =
 		`
@@ -69,6 +74,7 @@ export default class Archive {
 		const trembles = new VidFile("trembles", "Trembles", tremblesDesc, "Unity", "https://gamejolt.com/games/trembles/729503", tremblesTeam);
 		trembles.scale = 0.5;
 		this.videos.push(trembles);
+		this.shots.push(new Shot(scene, 'trembles', 6));
 
 		const ppDesc =
 		`
@@ -85,6 +91,7 @@ export default class Archive {
 		`
 		const peepee = new VidFile("peepeeMadness", "PeePee Madness", ppDesc, "Unity", "https://trugames.itch.io/peepee-madness", ppTeam);
 		this.videos.push(peepee);
+		this.shots.push(new Shot(scene, 'pp', 4));
 
 		const rollDesc =
 		`
@@ -101,6 +108,7 @@ export default class Archive {
 		`
 		const roll = new VidFile("ROHLB", "Roll On Home Little Buddy", rollDesc, "Unity", "_", rollTeam);
 		this.videos.push(roll);
+		this.shots.push(new Shot(scene, 'rohlb', 5));
 	}
 
 	public setVidInfo(file: VidFile) {
@@ -158,6 +166,22 @@ export default class Archive {
 		const vid = this.videos[this.cur];
 		this.cur = (this.cur + 1) % this.videos.length;
 		return vid;
+	}
+
+	public placeShot(shot: number, x: number, y: number) {
+		if (shot >= 0 && shot < this.shots.length) {
+			this.shots[shot].x = x;
+			this.shots[shot].y = y;
+			this.shots[shot].play();
+		}
+	}
+
+	update() {
+		for (let i = 0; i < this.shots.length; i++) {
+			if (this.shots[i].playing) {
+				this.shots[i].update();
+			}
+		}
 	}
 }
 
