@@ -26,10 +26,8 @@ export default class Archive {
 
 	private cur: number = 0;	
 	private curCloud?: cloud;
-
-	constructor(scene: Phaser.Scene) {
-		scene.add.existing(this);
-		
+	
+	constructor() {
 		const gdDesc = `
 			2 player browser based celular automata. 
 			Blast through space debris and rescue survivors
@@ -38,7 +36,7 @@ export default class Archive {
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
 		gloryDogs.scale = 0.5;	
 		this.videos.push(gloryDogs);
-		this.shots.push(new Shot(scene, 'gd', 5));
+		this.shots.push(new Shot('gd', 5));
 
 		const stroidDesc = 
 			`
@@ -55,7 +53,7 @@ export default class Archive {
 		`
 		const stroid = new VidFile("stroid", "Stroid", stroidDesc, "Unity", "_", stroidTeam);
 		this.videos.push(stroid);
-		this.shots.push(new Shot(scene, 'stroid', 6));
+		this.shots.push(new Shot('stroid', 6));
 
 		const tremblesDesc =
 		`
@@ -74,7 +72,7 @@ export default class Archive {
 		const trembles = new VidFile("trembles", "Trembles", tremblesDesc, "Unity", "https://gamejolt.com/games/trembles/729503", tremblesTeam);
 		trembles.scale = 0.5;
 		this.videos.push(trembles);
-		this.shots.push(new Shot(scene, 'trembles', 6));
+		this.shots.push(new Shot('trembles', 6));
 
 		const ppDesc =
 		`
@@ -91,7 +89,7 @@ export default class Archive {
 		`
 		const peepee = new VidFile("peepeeMadness", "PeePee Madness", ppDesc, "Unity", "https://trugames.itch.io/peepee-madness", ppTeam);
 		this.videos.push(peepee);
-		this.shots.push(new Shot(scene, 'pp', 4));
+		this.shots.push(new Shot('pp', 4));
 
 		const rollDesc =
 		`
@@ -108,7 +106,7 @@ export default class Archive {
 		`
 		const roll = new VidFile("ROHLB", "Roll On Home Little Buddy", rollDesc, "Unity", "_", rollTeam);
 		this.videos.push(roll);
-		this.shots.push(new Shot(scene, 'rohlb', 5));
+		this.shots.push(new Shot('rohlb', 5));
 	}
 
 	public setVidInfo(file: VidFile) {
@@ -168,11 +166,28 @@ export default class Archive {
 		return vid;
 	}
 
+	public addShotsToScene(scene: Phaser.Scene) {
+		for (let i = 0; i < this.shots.length; i++) {
+			this.shots[i].addToScene(scene);
+		}
+	}
+
 	public placeShot(shot: number, x: number, y: number) {
 		if (shot >= 0 && shot < this.shots.length) {
-			this.shots[shot].x = x;
-			this.shots[shot].y = y;
-			this.shots[shot].play();
+			this.shots[shot].container.x = x;
+			this.shots[shot].container.y = y;
+		}
+	}
+
+	public showShots() {
+		for (let i = 0; i < this.shots.length; i++) {
+			this.shots[i].play();
+		}
+	}
+
+	public hideShots() {
+		for (let i = 0; i < this.shots.length; i++) {
+			this.shots[i].hide();
 		}
 	}
 

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import {PreloadScene} from './preload';
+import {Menu} from './menu';
 import Player from './player';
 import Archive from './archive';
 import Cloud from './cloud';
@@ -9,18 +10,36 @@ export const worldSize: number = 3000;
 const worldCam: boolean = true;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
+let paused = false;
 
 class MainScene extends Phaser.Scene {
 	
 	private player!: Player;
 	private clouds: Cloud[] = [];
+	public videos: Phaser.GameObjects.Video[] = [];
+	private archive!: Archive;
 
 	constructor() {
-		super('main');
+		super({key: 'mainScene'});
 	}
 
 	create() {
+		console.log("main scene created");
 		//const worldSize = 2000;
+		//this.scene.launch('Menu');
+		/*
+		this.input.keyboard.on('keydown-ESC', () => {
+			if (this.scene.isPaused('mainScene')) {
+				this.scene.resume('mainScene');
+				this.scene.stop('Menu');
+			} else {
+				this.scene.pause('mainScene');
+				this.scene.launch('Menu', {archive: this.archive});
+			}
+		});
+		*/
+		this.events.on('pause', this.onPause, this);
+		this.events.on('resume', this.onResume, this);
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
 		
 		//homeBase.setDisplaySize(600, 600);
@@ -52,18 +71,19 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
-		this.archive = new Archive(this);
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 60, 1200, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
 
+/*
 		this.archive.placeShot(0, worldSize/2, worldSize/2 - 400);
 		this.archive.placeShot(1, worldSize/2, worldSize/2 - 800);
 		this.archive.placeShot(2, worldSize/2, worldSize/2);
 		this.archive.placeShot(3, worldSize/2, worldSize/2 + 400);
 		this.archive.placeShot(4, worldSize/2, worldSize/2 + 800);
+		*/
 		/*
 		this.physics.add.collider(this.player, gloryCloud, () => {
 			console.log('Collision!');
@@ -76,11 +96,16 @@ class MainScene extends Phaser.Scene {
 		*/
 	}
 
+	init(data: Archive) {
+		this.archive = data.archive;
+		console.log("got archive data");
+	}
+
 	update() {
+		this.archive.update();
 		for (let i = 0; i < this.clouds.length; i++) {
 			this.clouds[i].update();
 		}
-		this.archive.update();
 		
 		this.player.update();
 		const cam = this.cameras.main;
@@ -99,6 +124,15 @@ class MainScene extends Phaser.Scene {
 			}
 			console.log(this.player.x + ", " + this.player.y);
 		}
+	}
+
+	private onPause() {
+		console.log("main scene is pausing");
+		this.videos.forEach(video => video.pause());
+	}
+
+	private onResume() {
+		this.videos.forEach(video => video.resume());
 	}
 }
 
@@ -127,7 +161,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 				true
 		}
 	},
-	scene: [PreloadScene, MainScene],
+	scene: [PreloadScene, Menu, MainScene],
 };
 
 game = new Phaser.Game(config);
