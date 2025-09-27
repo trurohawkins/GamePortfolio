@@ -7,7 +7,7 @@ import Cloud from './cloud';
 import Shot from './shot';
 
 export const worldSize: number = 3000;
-const worldCam: boolean = true;
+const worldCam: boolean = false;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 let paused = false;
@@ -71,13 +71,13 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
+/*
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 60, 1200, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
 
-/*
 		this.archive.placeShot(0, worldSize/2, worldSize/2 - 400);
 		this.archive.placeShot(1, worldSize/2, worldSize/2 - 800);
 		this.archive.placeShot(2, worldSize/2, worldSize/2);

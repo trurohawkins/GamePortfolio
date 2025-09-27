@@ -4,7 +4,11 @@ export class PreloadScene extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image('player', '/assets/playerHead.png'); // path is relative to public root
+		//this.load.image('player', '/assets/playerHead.png'); // path is relative to public root
+		this.load.spritesheet('player', 'assets/player.png', {
+			frameWidth: 32,
+			frameHeight: 32
+		});
 		this.load.image('background', '/assets/skyBG.png');
 		this.load.image('pizza', '/assets/pizza.png');
 		this.load.video('gloryDogs', 'assets/trailers/gloryDogsTrailer.mp4');//, 'loadeddata', true, true);

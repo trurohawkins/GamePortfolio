@@ -3,6 +3,8 @@ import Phaser from 'phaser';
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 	private boost: number = 500;
+	private boostPause: number = 80;
+	private boostPauseCounter: number = 0;
 	private accelMax: number = 1500;
 	private accel: number = 0;
 	private decel: number = 5;
@@ -40,10 +42,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
 		scene.physics.add.existing(this)
 
+		this.createAnimations();
+		this.play('idle')
+		this.on('animationcomplete', this.handleAnimationComplete, this);
+
 		this.setCollideWorldBounds(false);
 		const radius = Math.min(this.width, this.height) / 2;
 		this.body.setCircle(radius);
 		this.setDepth(1);
+
+		this.face = scene.add.sprite(x, y, 'player', 14);
+		this.face.setDepth(this.depth+1);
+		this.scene.events.on('postupdate', () => {
+			this.face.setPosition(this.x, this.y)
+			this.face.setRotation(this.rotation)
+		
+		});
 
 		this.cursors = scene.input.keyboard.createCursorKeys();
 		this.keys = {
@@ -103,6 +117,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 		const curAccel = this.accel / this.accelMax;
 		if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+			this.play('boosting')
+			this.boostPauseCounter = this.boostPause;
 			// the faster we are going the less boost we add
 			const boost = Phaser.Math.Linear(this.boost, this.boost/100, curAccel);
 			if (this.accel + boost < this.accelMax) {
@@ -112,10 +128,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 			this.pull = 0;
 		} else {
-			if (this.accel - this.decel > 0) {
-				this.accel -= this.decel;
+			console.log(this.boostPauseCounter + " -- " + this.accel + " < " + (this.accelMax * 0.5));
+			if (this.boostPauseCounter > 0) {
+				this.boostPauseCounter--;
 			} else {
-				this.accel = 0;
+				if (this.accel - this.decel > 0) {
+					this.accel -= this.decel;
+					if (this.accel < this.accelMax * 0.4) {
+						if (this.anims.currentAnim?.key === 'boosted') {
+							this.play('slowing');
+						}
+					}
+				} else {
+					this.accel = 0;
+				}
 			}
 		}
 		const dist = Phaser.Math.Distance.Between(this.x, this.y, this.home.x, this.home.y);
@@ -147,7 +173,45 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		//this.body.velocity.y = rotDir.y * this.accel;//-= this.accel;
 		//this.body.velocity.x = rotDir.x * this.accel;
 		this.setVelocity((rotDir.x * this.accel) + homeDir.x, (rotDir.y * this.accel) + homeDir.y);
+	}
 
+	private createAnimations() {
+		let speed = 10;
+		this.scene.anims.create({
+			key: 'idle',
+			frames: [{ key: 'player', frame: 0 }],
+			frameRate: 1,
+			repeat: -1
+		});
+
+		this.scene.anims.create({
+			key: 'boosting',
+			frames: this.scene.anims.generateFrameNumbers('player', {start: 1, end: 8}),
+			frameRate: speed,
+			repeat: 0
+		});
+
+		this.scene.anims.create({
+			key: 'boosted',
+			frames: [{ key: 'player', frame: 9 }],
+			frameRate: 1,
+			repeat: -1
+		});
+
+		this.scene.anims.create({
+			key: 'slowing',
+			frames: this.scene.anims.generateFrameNumbers('player', {start: 10, end: 12}),
+			frameRate: speed,
+			repeat: 0
+		});
+	}
+
+	private handleAnimationComplete(anim: Phaser.Animations.Animation) {
+		if (anim.key === 'boosting') {
+			this.play('boosted')
+		} else if (anim.key === 'slowing') {
+			this.play('idle')
+		}
 	}
 
 	public watchVideo() {
