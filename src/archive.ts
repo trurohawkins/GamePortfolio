@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import Shot from './shot';
 
+function wait(ms: number) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class VidFile {
 	public key: string;
 	public title: string;
@@ -108,48 +112,55 @@ export default class Archive {
 		this.shots.push(new Shot('rohlb', 5));
 	}
 
+
 	public setVidInfoIndex(index: number) {
 		this.setVidInfo(this.videos[index])
 	}
 
-	public setVidInfo(file: VidFile) {
+	public async setVidInfo(file: VidFile) {
 		const leftPanel = document.getElementById('left-panel');
 		if (leftPanel) {
 			leftPanel.style.backgroundColor = '#333';
-		}
-		const gameTitle = document.getElementById('gameTitle');
-		if (gameTitle) {
-			gameTitle.textContent = file.title;
-			gameTitle.className = 'block';
-		}
-		const gameDescription = document.getElementById('gameDescription');
-		if (gameDescription) {
-			gameDescription.textContent = file.description;
-			gameDescription.className = 'block';
-		}
-		const technologies = document.getElementById('technologies');
-		if (technologies) {
-			technologies.textContent = file.tech;
-			technologies.className = 'block'; 
 		}
 		const rightPanel = document.getElementById('right-panel');
 		if (rightPanel) {
 			rightPanel.style.backgroundColor = '#333';
 		}
+		const gameTitle = document.getElementById('gameTitle');
+		if (gameTitle) {
+			gameTitle.textContent = file.title;
+			gameTitle.className = 'block';
+			await wait(500);
+		}
+		const gameDescription = document.getElementById('gameDescription');
+		if (gameDescription) {
+			gameDescription.textContent = file.description;
+			gameDescription.className = 'block';
+			await wait(500);
+		}
+		const technologies = document.getElementById('technologies');
+		if (technologies) {
+			technologies.textContent = file.tech;
+			technologies.className = 'block'; 
+			await wait(500);
+		}
 		const page = document.getElementById('page');
 		if (page) {
 			page.className = 'block';
+			await wait(500);
 		}
 		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
 		if (gameLink) {
 			gameLink.textContent = "Game Page";
 			gameLink.href = file.gameLink;
 			gameLink.target = "_blank";
+			await wait(500);
 		}
 		const collaborators = document.getElementById('collaborators');
 		if (collaborators) {
 			collaborators.textContent = file.collaborators;
 			collaborators.className = 'block'; 
+			await wait(500);
 		}
 	}
 
