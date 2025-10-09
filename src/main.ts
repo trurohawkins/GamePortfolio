@@ -71,12 +71,12 @@ class MainScene extends Phaser.Scene {
 		}
 	
 		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
-/*
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 60, 1200, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
+/*
 
 		this.archive.placeShot(0, worldSize/2, worldSize/2 - 400);
 		this.archive.placeShot(1, worldSize/2, worldSize/2 - 800);

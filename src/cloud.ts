@@ -96,7 +96,7 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 		});
 		//this.video.video.currentTime = 0;
 		//this.video.setVisible(false);
-		this.player.watching = false;
+		this.player.stopWatching();
 	}
 }
 

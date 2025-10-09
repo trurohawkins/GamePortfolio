@@ -34,9 +34,8 @@ export default class Archive {
 			Help the most people to WIN THE GLORY!
 		`;
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
-		gloryDogs.scale = 0.5;	
 		this.videos.push(gloryDogs);
-		this.shots.push(new Shot('gd', 5));
+		this.shots.push(new Shot('gd', 5, undefined, 0.3));
 
 		const stroidDesc = 
 			`
@@ -89,7 +88,7 @@ export default class Archive {
 		`
 		const peepee = new VidFile("peepeeMadness", "PeePee Madness", ppDesc, "Unity", "https://trugames.itch.io/peepee-madness", ppTeam);
 		this.videos.push(peepee);
-		this.shots.push(new Shot('pp', 4));
+		this.shots.push(new Shot('pp', 4, undefined, 0.2));
 
 		const rollDesc =
 		`
@@ -107,6 +106,10 @@ export default class Archive {
 		const roll = new VidFile("ROHLB", "Roll On Home Little Buddy", rollDesc, "Unity", "_", rollTeam);
 		this.videos.push(roll);
 		this.shots.push(new Shot('rohlb', 5));
+	}
+
+	public setVidInfoIndex(index: number) {
+		this.setVidInfo(this.videos[index])
 	}
 
 	public setVidInfo(file: VidFile) {
@@ -177,6 +180,10 @@ export default class Archive {
 			this.shots[shot].container.x = x;
 			this.shots[shot].container.y = y;
 		}
+	}
+
+	public highlightShot(shot: number, on: boolean) {
+		this.shots[shot].highlight(on)
 	}
 
 	public showShots() {

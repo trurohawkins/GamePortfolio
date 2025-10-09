@@ -56,7 +56,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.scene.events.on('postupdate', () => {
 			this.face.setPosition(this.x, this.y)
 			this.face.setRotation(this.rotation)
-		
 		});
 
 		this.cursors = scene.input.keyboard.createCursorKeys();
@@ -72,7 +71,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	update() {
 		if (this.watching) {
 			if (Phaser.Input.Keyboard.JustDown(this.keys.right) || Phaser.Input.Keyboard.JustDown(this.keys.left) || Phaser.Input.Keyboard.JustDown(this.keys.up)) {
-				this.watching = false;
+				this.stopWatching()
 			} else {
 				return;
 			}
@@ -128,7 +127,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 			this.pull = 0;
 		} else {
-			console.log(this.boostPauseCounter + " -- " + this.accel + " < " + (this.accelMax * 0.5));
+			//console.log(this.boostPauseCounter + " -- " + this.accel + " < " + (this.accelMax * 0.5));
 			if (this.boostPauseCounter > 0) {
 				this.boostPauseCounter--;
 			} else {
@@ -211,6 +210,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			this.play('boosted')
 		} else if (anim.key === 'slowing') {
 			this.play('idle')
+			if (this.watching) {
+				this.face.setVisible(false)
+			}
 		}
 	}
 
@@ -220,6 +222,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.rotSpd = 0;
 		this.pull = 0;
 		this.watching = true;
+		if (this.anims.currentAnim?.key !== 'idle') {
+			this.play('slowing');
+		} else {
+			this.face.setVisible(false)
+		}
+
+	}
+
+	public stopWatching() {
+		this.watching = false
+		this.face.setVisible(true)
 	}
 
 	public setHome(home: Phaser.Physics.Arcade.Image) {

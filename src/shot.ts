@@ -11,12 +11,13 @@ export default class Shot {
 	private curShot: Phaser.GameObjects.Sprite;
 	private nextShot: Phaser.GameObjects.Sprite;
 
-	constructor(shot: string, num: number,  duration = 1000) {
+	constructor(shot: string, num: number,  duration = 1000, scale = 0.1) {
 		this.duration = duration;
 		this.names = [];
 		for (let i = 0; i < num; i++ ) {
 			this.names.push(shot + i);
 		}
+		this.scale = scale
 	}
 
 	addToScene(scene: Phaser.Scene) {
@@ -26,10 +27,21 @@ export default class Shot {
 			const sprite = scene.add.sprite(0, 0, tex)
 			sprite.setAlpha(0);//i === 0 ? 0 : 0);
 			sprite.setDepth(1000);
+			sprite.setTint(0x808080)
 			this.container.add(sprite)
 			this.shots.push(sprite);
 		});
-		this.container.setScale(0.15);
+		this.container.setScale(this.scale);
+	}
+
+	highlight(on: boolean) {
+		this.shots.forEach(shot => {
+			if (on) {
+				shot.setTint(0xFFFFFF)
+			} else {
+				shot.setTint(0x808080)
+			}
+		});
 	}
 
 	crossFadeTo(index: number) {
