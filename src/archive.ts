@@ -113,11 +113,11 @@ export default class Archive {
 	}
 
 
-	public setVidInfoIndex(index: number) {
-		this.setVidInfo(this.videos[index])
+	public setVidInfoIndex(index: number, pause: number) {
+		this.setVidInfo(this.videos[index], pause)
 	}
 
-	public async setVidInfo(file: VidFile) {
+	public async setVidInfo(file: VidFile, pause: number) {
 		const leftPanel = document.getElementById('left-panel');
 		if (leftPanel) {
 			leftPanel.style.backgroundColor = '#333';
@@ -130,37 +130,37 @@ export default class Archive {
 		if (gameTitle) {
 			gameTitle.textContent = file.title;
 			gameTitle.className = 'block';
-			await wait(500);
+			await wait(pause);
 		}
 		const gameDescription = document.getElementById('gameDescription');
 		if (gameDescription) {
 			gameDescription.textContent = file.description;
 			gameDescription.className = 'block';
-			await wait(500);
+			await wait(pause);
 		}
 		const technologies = document.getElementById('technologies');
 		if (technologies) {
 			technologies.textContent = file.tech;
 			technologies.className = 'block'; 
-			await wait(500);
+			await wait(pause);
 		}
 		const page = document.getElementById('page');
 		if (page) {
 			page.className = 'block';
-			await wait(500);
+			await wait(pause);
 		}
 		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
 		if (gameLink) {
 			gameLink.textContent = "Game Page";
 			gameLink.href = file.gameLink;
 			gameLink.target = "_blank";
-			await wait(500);
+			await wait(pause);
 		}
 		const collaborators = document.getElementById('collaborators');
 		if (collaborators) {
 			collaborators.textContent = file.collaborators;
 			collaborators.className = 'block'; 
-			await wait(500);
+			await wait(pause);
 		}
 	}
 

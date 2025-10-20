@@ -15,12 +15,18 @@ export class Menu extends Phaser.Scene {
 		this.archive = new Archive();
 		this.add.existing(this.archive);
 		this.archive.addShotsToScene(this);
+		this.buffer = 200;
 		this.spacing = 180;
-		this.numShots = 5
-		this.curShot = 0
+		this.numShots = 5;
+		this.displayShots = 3;
+		this.curShot = 0;
+		this.preShot = 4;
+		this.placeShots()
+		/*
 		for (let i = 0; i < this.numShots; i++) {
 			this.archive.placeShot(i, this.scale.width/2, this.spacing * i);
 		}
+		*/
 		this.selectShot(true)
 		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
 			this.onResize(gameSize)
@@ -50,11 +56,21 @@ export class Menu extends Phaser.Scene {
 	}
 
 	private onResize(gameSize: Phaser.Structs.Size) {
-		for (let i = 0; i < 5; i++) {
-			this.archive.placeShot(i, gameSize.width/2, this.spacing * i);
-		}
 		this.background.width = gameSize.width
 		this.background.height = gameSize.height
+		this.placeShots()
+	}
+
+	private placeShots() {
+		for (let i = 0; i < this.numShots; i++) {
+			const shot = (this.preShot + i) % this.numShots
+			if (i < this.displayShots) { 
+				this.archive.placeShot(shot, this.scale.width/2, this.buffer + this.spacing * i);
+			} else {
+				this.archive.placeShot(shot, 99999, 99999);
+			}
+		}
+
 	}
 
 	update() {
@@ -71,22 +87,29 @@ export class Menu extends Phaser.Scene {
 
 	private move(dir: number) {
 		this.selectShot(false)
+		this.curShot = this.incNum(this.curShot, dir)
+		this.preShot = this.incNum(this.preShot, dir)
+		this.selectShot(true)
+		this.placeShots()
+	}
+
+	private incNum(val: number, dir: number) {
 		if (dir > 0) {
-			this.curShot = (this.curShot + 1) % this.numShots
+			val = (val + 1) % this.numShots
 		} else {
-			if (this.curShot + dir >= 0) {
-				this.curShot += dir
+			if (val + dir >= 0) {
+				val += dir
 			} else {
-				this.curShot = this.numShots - 1
+				val = this.numShots - 1
 			}
 		}
-		this.selectShot(true)
+		return val
 	}
 
 	private selectShot(on: boolean) {
 		this.archive.highlightShot(this.curShot, on)
 		if (this.paused) {
-			this.archive.setVidInfoIndex(this.curShot)
+			this.archive.setVidInfoIndex(this.curShot, 0)
 		}
 	}
 }

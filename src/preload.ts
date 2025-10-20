@@ -9,7 +9,9 @@ export class PreloadScene extends Phaser.Scene {
 			frameWidth: 32,
 			frameHeight: 32
 		});
+		this.load.image('planet', '/assets/planet.png');
 		this.load.image('background', '/assets/skyBG.png');
+		this.load.image('space', '/assets/space.png');
 		this.load.image('pizza', '/assets/pizza.png');
 		this.load.video('gloryDogs', 'assets/trailers/gloryDogsTrailer.mp4');//, 'loadeddata', true, true);
 		this.load.video('stroid', 'assets/trailers/StroidTrailer.mp4');

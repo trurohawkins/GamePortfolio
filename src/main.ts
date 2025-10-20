@@ -6,7 +6,7 @@ import Archive from './archive';
 import Cloud from './cloud';
 import Shot from './shot';
 
-export const worldSize: number = 3000;
+export const worldSize: number = 4500;
 const worldCam: boolean = false;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
@@ -43,10 +43,15 @@ class MainScene extends Phaser.Scene {
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
 		
 		//homeBase.setDisplaySize(600, 600);
-		this.homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'player');
-		this.homeBase.setScale(7);
-		this.homeBase.body.setCircle(this.homeBase.width * 0.43);
-		this.homeBase.body.setOffset(2, 3);
+		this.space = this.physics.add.image(worldSize/2, worldSize/2, 'space');
+		this.space.setDepth(5);
+		this.homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'planet');
+		//this.homeBase.setScale(7);
+		const radius = Math.min(this.homeBase.height, this.homeBase.width)/2;
+		const buffer = 10;
+		this.homeBase.body.setCircle(radius - buffer);
+		console.log("home base radius " + radius)
+		this.homeBase.body.setOffset(buffer, buffer);
 		this.homeBase.body.moves = false;
 		this.homeBase.setImmovable(true);
 		this.homeBase.setGravity(false);

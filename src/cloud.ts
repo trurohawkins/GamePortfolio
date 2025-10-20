@@ -79,7 +79,7 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 		}
 		player.watchVideo();
 		this.archive.playVideo(this);
-		this.archive.setVidInfo(this.file);
+		this.archive.setVidInfo(this.file, 500);
 	}
 
 	private onVideoComplete() {
