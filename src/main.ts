@@ -11,6 +11,8 @@ const worldCam: boolean = false;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 let paused = false;
+let lightsOff: boolean = true;
+let turningOn: boolean = false;
 
 class MainScene extends Phaser.Scene {
 	
@@ -18,13 +20,13 @@ class MainScene extends Phaser.Scene {
 	private clouds: Cloud[] = [];
 	public videos: Phaser.GameObjects.Video[] = [];
 	private archive!: Archive;
+	private doorLeft!: Phaser.Gameobjects.Rectangle;
 
 	constructor() {
 		super({key: 'mainScene'});
 	}
 
 	create() {
-		console.log("main scene created");
 		//const worldSize = 2000;
 		//this.scene.launch('Menu');
 		/*
@@ -38,6 +40,19 @@ class MainScene extends Phaser.Scene {
 			}
 		});
 		*/
+		this.doorLeft = this.add.rectangle(0, -1, this.scale.width/2, this.scale.height, 0x000000, 1).setOrigin(0);
+		this.doorLeft.setDepth(999999);
+		this.doorLeft.setAlpha(0);
+		this.doorLeft.setScrollFactor(0);
+		this.doorRight = this.add.rectangle(this.scale.width/2, -1, this.scale.width/2, this.scale.height, 0x000000, 1).setOrigin(0);
+		this.doorRight.setDepth(999999);
+		this.doorRight.setAlpha(0);
+		this.doorRight.setScrollFactor(0);
+		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
+			this.onResize(gameSize)
+		});
+
+		console.log("pooo bakc:");
 		this.events.on('pause', this.onPause, this);
 		this.events.on('resume', this.onResume, this);
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
@@ -81,24 +96,10 @@ class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
-/*
 
-		this.archive.placeShot(0, worldSize/2, worldSize/2 - 400);
-		this.archive.placeShot(1, worldSize/2, worldSize/2 - 800);
-		this.archive.placeShot(2, worldSize/2, worldSize/2);
-		this.archive.placeShot(3, worldSize/2, worldSize/2 + 400);
-		this.archive.placeShot(4, worldSize/2, worldSize/2 + 800);
-		*/
-		/*
-		this.physics.add.collider(this.player, gloryCloud, () => {
-			console.log('Collision!');
-		});
-		*/
-		/*
-		const video = this.add.video(400, 300, 'gloryDogs');
-		video.setScale(0.5)
-		video.play(true)
-		*/
+		this.keys = {
+			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+		}
 	}
 
 	init(data: Archive) {
@@ -107,28 +108,89 @@ class MainScene extends Phaser.Scene {
 	}
 
 	update() {
-		this.archive.update();
-		for (let i = 0; i < this.clouds.length; i++) {
-			this.clouds[i].update();
-		}
-		
-		this.player.update();
-		const cam = this.cameras.main;
-		const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
-		if (dist > worldSize/2) {
-			let angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
-			//angle += Phaser.Math.DegToRad(-90);
-			console.log(this.player.x + ", " + this.player.y);
-			const ax = Math.cos(angle) * (worldSize);
-			const ay = Math.sin(angle) * (worldSize);
-			this.player.x += ax;
-			this.player.y += ay;
-			if (!worldCam && !whipCam) {
-				cam.scrollX += ax;
-				cam.scrollY += ay;
+		if (!lightsOff) {
+			this.archive.update();
+			for (let i = 0; i < this.clouds.length; i++) {
+				this.clouds[i].update();
 			}
-			console.log(this.player.x + ", " + this.player.y);
+			
+			this.player.update();
+			const cam = this.cameras.main;
+			const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
+			if (dist > worldSize/2) {
+				let angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
+				//angle += Phaser.Math.DegToRad(-90);
+				console.log(this.player.x + ", " + this.player.y);
+				const ax = Math.cos(angle) * (worldSize);
+				const ay = Math.sin(angle) * (worldSize);
+				this.player.x += ax;
+				this.player.y += ay;
+				if (!worldCam && !whipCam) {
+					cam.scrollX += ax;
+					cam.scrollY += ay;
+				}
+				console.log(this.player.x + ", " + this.player.y);
+			}
+		} else {
+			if (!turningOn && Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+				turningOn = true;
+				const left = document.getElementById('doorLeft');
+				const right = document.getElementById('doorRight');
+				let dummy = {progress: 0};
+				this.tweens.add({
+					targets: dummy,
+					progress: 100,
+					duration: 1000,
+					ease: 'Expo.inOut',
+					onUpdate: () => {
+						const value = dummy.progress;
+						left.style.transform = `translateX(${-value}%)`;
+						right.style.transform = `translateX(${value}%)`;
+					},
+					onComplete: () => {
+						lightsOff = false;
+					}
+				});
+				/*
+				this.tweens.add({
+					targets: [this.doorLeft, this.doorRight],
+					x: (target: Phaser.GameObjects.Rectangle) => {
+						return target == this.doorLeft ? -target.width : this.scale.width;
+					},
+					duration: 1500,
+					ease: 'Expo.inOut',
+					onComplete: () => {
+						this.doorsOpen();
+					}
+				});
+				*/
+			}
 		}
+
+	}
+
+	openDoors() {
+
+	}
+
+	doorsOpen() {
+		this.doorRight.setAlpha(0);
+		this.doorLeft.setAlpha(0);
+		const leftPanel = document.getElementById('left-panel');
+		if (leftPanel) {
+			leftPanel.className = "panel";
+		}
+		const rightPanel = document.getElementById('right-panel');
+		if (rightPanel) {
+			rightPanel.className = "panel";
+		}
+
+		const banner = document.getElementById('banner');
+		if (banner) {
+			banner.className = "banner";
+		}
+		lightsOff = false;
+
 	}
 
 	private onPause() {
@@ -139,26 +201,30 @@ class MainScene extends Phaser.Scene {
 	private onResume() {
 		this.videos.forEach(video => video.resume());
 	}
+
+	private onResize(gameSize: Phaser.Structs.Size) {
+		this.doorLeft.width = gameSize.width/2;
+		this.doorLeft.height = gameSize.height;
+		
+		this.doorRight.width = gameSize.width/2;
+		this.doorRight.height = gameSize.height;
+		this.doorRight.x = gameSize.width/2;
+	}
+
 }
 
 const wrapper = document.getElementById('game-wrapper')!;
-const width = wrapper.clientWidth;
-const height = wrapper.clientHeight;
-
 let game: Phaser.Game;
 
 const config: Phaser.Types.Core.GamesConfig = {
 	type: Phaser.AUTO,
-	//width: width,
-	//height: height,
 	parent: 'game-wrapper',
 	scale: {
 		mode: Phaser.Scale.RESIZE,
+		parent: 'game-wrapper',
 		autoCenter: Phaser.Scale. CENTER_BOTH,
-		width: '100%',
-		height: '100%',
 	},
-	backgroundColor:'#00000',
+	backgroundColor:'#000000',
 	physics: {
 		default: 'arcade',
 		arcade: {
