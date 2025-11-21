@@ -161,3 +161,17 @@ canvas {
 	right: 0;
 	transform: translateX(0);
 }
+
+#welcome {
+	position: fixed;
+	z-index: 99999;
+	height: 100vh;
+	width: 100vw;
+	color: white;
+	text-align: center;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Orbitron', san-seriff;
+}

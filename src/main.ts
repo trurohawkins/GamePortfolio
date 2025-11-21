@@ -98,7 +98,7 @@ class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
 
 		this.keys = {
-			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 		}
 	}
 
@@ -136,16 +136,18 @@ class MainScene extends Phaser.Scene {
 				turningOn = true;
 				const left = document.getElementById('doorLeft');
 				const right = document.getElementById('doorRight');
+				const welcome = document.getElementById('welcome');
 				let dummy = {progress: 0};
 				this.tweens.add({
 					targets: dummy,
 					progress: 100,
-					duration: 1000,
+					duration: 1500,
 					ease: 'Expo.inOut',
 					onUpdate: () => {
 						const value = dummy.progress;
 						left.style.transform = `translateX(${-value}%)`;
 						right.style.transform = `translateX(${value}%)`;
+						welcome.style.opacity = 1 - value;
 					},
 					onComplete: () => {
 						lightsOff = false;
@@ -229,7 +231,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 		default: 'arcade',
 		arcade: {
 			debug: 
-				true
+				false
 		}
 	},
 	scene: [PreloadScene, Menu, MainScene],
