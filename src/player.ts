@@ -28,15 +28,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 	public watching: boolean = false;
 
-	private keys!: {
-		up: Phaser.Input.Keyboard.Key,
-		down: Phaser.Input.Keyboard.Key,
-		left: Phaser.Input.Keyboard.Key,
-		right: Phaser.Input.Keybaord.Key
-	};
+	private upPress: boolean = false;
+	private leftPress: boolean = false;
+	private rightPress: boolean = false;
 
-	constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-		super(scene, x, y, texture);
+	constructor(scene: Phaser.Scene, x: number, y: number) {
+		super(scene, x, y, 'player');
 		//console.log("player start")
 		// Add the player to the scene
 		scene.add.existing(this);
@@ -57,41 +54,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			this.face.setPosition(this.x, this.y)
 			this.face.setRotation(this.rotation)
 		});
-
-		this.cursors = scene.input.keyboard.createCursorKeys();
 		this.keys = {
-			up: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-			down: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-			left: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-			right: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
-			boost: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+			down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+			boost: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
 		};
 	}
 
 	update() {
 		if (this.watching) {
-			if (Phaser.Input.Keyboard.JustDown(this.keys.right) || Phaser.Input.Keyboard.JustDown(this.keys.left) || Phaser.Input.Keyboard.JustDown(this.keys.up)) {
-				this.stopWatching()
-			} else {
 				return;
-			}
 		}
-		//this.scene.physics.world.wrap(this, 0);
-		if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
-			this.rotInput = this.rotPause;
-			if (this.rotSpd - this.rotAccel > -this.rotMax) {
-				this.rotSpd -= this.rotAccel;
-			} else {
-				this.rotSpd = -this.rotMax;
-			}
-		} else if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
-			this.rotInput = this.rotPause;
-			if (this.rotSpd + this.rotAccel < this.rotMax) {
-				this.rotSpd += this.rotAccel;
-			} else {
-				this.rotSpd = this.rotMax;
-			}
-		} else {
+		if (this.leftPress) {
+			this.leftPress = false
+		}
+		if (this.rightPress) {
+			this.rightPress = false
+		}
+		if (!this.leftPress && !this.rightPress) {
 			if (this.rotSpd != 0) {
 				let dir = Math.sign(this.rotSpd);
 				if (Math.abs(this.rotSpd) - this.rotDecel > 0) {
@@ -114,18 +93,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 		}
 
-		const curAccel = this.accel / this.accelMax;
-		if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
-			this.play('boosting')
-			this.boostPauseCounter = this.boostPause;
-			// the faster we are going the less boost we add
-			const boost = Phaser.Math.Linear(this.boost, this.boost/100, curAccel);
-			if (this.accel + boost < this.accelMax) {
-				this.accel += boost;
-			} else {
-				this.accel = this.accelMax;
-			}
-			this.pull = 0;
+		if (this.upPress) {
+			this.upPress = false;
 		} else {
 			//console.log(this.boostPauseCounter + " -- " + this.accel + " < " + (this.accelMax * 0.5));
 			if (this.boostPauseCounter > 0) {
@@ -172,6 +141,53 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		//this.body.velocity.y = rotDir.y * this.accel;//-= this.accel;
 		//this.body.velocity.x = rotDir.x * this.accel;
 		this.setVelocity((rotDir.x * this.accel) + homeDir.x, (rotDir.y * this.accel) + homeDir.y);
+	}
+
+	public upPressed() {
+		if (this.watching) {
+			this.stopWatching()
+		} else {
+			const curAccel = this.accel / this.accelMax;
+			this.play('boosting')
+			this.boostPauseCounter = this.boostPause;
+			// the faster we are going the less boost we add
+			const boost = Phaser.Math.Linear(this.boost, this.boost/100, curAccel);
+			if (this.accel + boost < this.accelMax) {
+				this.accel += boost;
+			} else {
+				this.accel = this.accelMax;
+			}
+			this.pull = 0;
+			this.upPress = true
+		}
+	}
+
+	public leftPressed() {
+		if (this.watching) {
+			this.stopWatching()
+		} else {
+			this.rotInput = this.rotPause;
+			if (this.rotSpd - this.rotAccel > -this.rotMax) {
+				this.rotSpd -= this.rotAccel;
+			} else {
+				this.rotSpd = -this.rotMax;
+			}
+			this.leftPress = true
+		}
+	}
+
+	public rightPressed() {
+		if (this.watching) {
+			this.stopWatching()
+		} else {
+			this.rotInput = this.rotPause;
+			if (this.rotSpd + this.rotAccel < this.rotMax) {
+				this.rotSpd += this.rotAccel;
+			} else {
+				this.rotSpd = this.rotMax;
+			}
+			this.rightPress = true
+		}
 	}
 
 	private createAnimations() {

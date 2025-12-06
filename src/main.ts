@@ -5,6 +5,7 @@ import Player from './player';
 import Archive from './archive';
 import Cloud from './cloud';
 import Shot from './shot';
+import Instructor from './instructor';
 
 export const worldSize: number = 4500;
 const worldCam: boolean = false;
@@ -20,7 +21,7 @@ class MainScene extends Phaser.Scene {
 	private clouds: Cloud[] = [];
 	public videos: Phaser.GameObjects.Video[] = [];
 	private archive!: Archive;
-	private doorLeft!: Phaser.Gameobjects.Rectangle;
+	private instructor!: Instructor;
 
 	constructor() {
 		super({key: 'mainScene'});
@@ -40,19 +41,17 @@ class MainScene extends Phaser.Scene {
 			}
 		});
 		*/
-		this.doorLeft = this.add.rectangle(0, -1, this.scale.width/2, this.scale.height, 0x000000, 1).setOrigin(0);
-		this.doorLeft.setDepth(999999);
-		this.doorLeft.setAlpha(0);
-		this.doorLeft.setScrollFactor(0);
-		this.doorRight = this.add.rectangle(this.scale.width/2, -1, this.scale.width/2, this.scale.height, 0x000000, 1).setOrigin(0);
-		this.doorRight.setDepth(999999);
-		this.doorRight.setAlpha(0);
-		this.doorRight.setScrollFactor(0);
-		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
-			this.onResize(gameSize)
-		});
+	 /*
+	 this.keys = [Phaser.Input.Keyboard.KeyCodes.W, Phaser.Input.Keyboard.KeyCodes.S,   
+		Phaser.Input.Keyboard.KeyCodes.A, Phaser.Input.Keyboard.KeyCodes.D, Phaser.Input.Keyboard.KeyCodes.SPACE]    
 
-		console.log("pooo bakc:");
+	*/
+		this.keys = {
+			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+			left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+			right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+			boost: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+		};
 		this.events.on('pause', this.onPause, this);
 		this.events.on('resume', this.onResume, this);
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
@@ -65,7 +64,6 @@ class MainScene extends Phaser.Scene {
 		const radius = Math.min(this.homeBase.height, this.homeBase.width)/2;
 		const buffer = 10;
 		this.homeBase.body.setCircle(radius - buffer);
-		console.log("home base radius " + radius)
 		this.homeBase.body.setOffset(buffer, buffer);
 		this.homeBase.body.moves = false;
 		this.homeBase.setImmovable(true);
@@ -74,7 +72,7 @@ class MainScene extends Phaser.Scene {
 		this.physics.world.setBounds(0, 0, worldSize, worldSize);
 		//this.cameras.main.setBounds(0, 0, worldSize, worldSize);
 
-		this.player = new Player(this, worldSize/2, worldSize/2 - (this.homeBase.displayWidth/2), 'player');
+		this.player = new Player(this, worldSize/2, worldSize/2 - (this.homeBase.displayWidth/2));
 		this.player.setHome(this.homeBase);//worldSize/2, worldSize/2);
 		this.physics.add.collider(this.player, this.homeBase);//, this.player.homeCollide, undefined, this);/*, () => {
 
@@ -96,31 +94,37 @@ class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
-
-		this.keys = {
-			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-		}
 	}
 
 	init(data: Archive) {
 		this.archive = data.archive;
-		console.log("got archive data");
 	}
 
 	update() {
 		if (!lightsOff) {
+			if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+				if (this.instructor) {
+					this.instructor.upPressed()
+				}
+				this.player.upPressed()
+			}
+			if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
+				this.player.leftPressed()
+			}
+			if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
+				this.player.rightPressed()
+			}
+			this.player.update();
 			this.archive.update();
 			for (let i = 0; i < this.clouds.length; i++) {
 				this.clouds[i].update();
 			}
 			
-			this.player.update();
 			const cam = this.cameras.main;
 			const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
 			if (dist > worldSize/2) {
 				let angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, this.homeBase.x, this.homeBase.y);
 				//angle += Phaser.Math.DegToRad(-90);
-				console.log(this.player.x + ", " + this.player.y);
 				const ax = Math.cos(angle) * (worldSize);
 				const ay = Math.sin(angle) * (worldSize);
 				this.player.x += ax;
@@ -129,11 +133,11 @@ class MainScene extends Phaser.Scene {
 					cam.scrollX += ax;
 					cam.scrollY += ay;
 				}
-				console.log(this.player.x + ", " + this.player.y);
 			}
 		} else {
-			if (!turningOn && Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+			if (!turningOn && Phaser.Input.Keyboard.JustDown(this.keys.boost)) {
 				turningOn = true;
+				lightsOff = false;
 				const left = document.getElementById('doorLeft');
 				const right = document.getElementById('doorRight');
 				const welcome = document.getElementById('welcome');
@@ -151,6 +155,7 @@ class MainScene extends Phaser.Scene {
 					},
 					onComplete: () => {
 						lightsOff = false;
+	 					this.instructor = new Instructor(this)
 					}
 				});
 				/*
