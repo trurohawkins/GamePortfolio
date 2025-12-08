@@ -15,8 +15,8 @@ export class Menu extends Phaser.Scene {
 		this.archive = new Archive();
 		this.add.existing(this.archive);
 		this.archive.addShotsToScene(this);
-		this.buffer = 200;
-		this.spacing = 180;
+		this.buffer = 120;
+		this.spacing = 290;
 		this.numShots = 5;
 		this.displayShots = 3;
 		this.curShot = 0;

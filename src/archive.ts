@@ -39,7 +39,7 @@ export default class Archive {
 		`;
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
 		this.videos.push(gloryDogs);
-		this.shots.push(new Shot('gd', 5, undefined, 0.3));
+		this.shots.push(new Shot('gd', 5));
 
 		const stroidDesc = 
 			`
@@ -92,7 +92,7 @@ export default class Archive {
 		`
 		const peepee = new VidFile("peepeeMadness", "PeePee Madness", ppDesc, "Unity", "https://trugames.itch.io/peepee-madness", ppTeam);
 		this.videos.push(peepee);
-		this.shots.push(new Shot('pp', 4, undefined, 0.2));
+		this.shots.push(new Shot('pp', 4));
 
 		const rollDesc =
 		`

@@ -11,7 +11,7 @@ export default class Shot {
 	private curShot: Phaser.GameObjects.Sprite;
 	private nextShot: Phaser.GameObjects.Sprite;
 
-	constructor(shot: string, num: number,  duration = 1000, scale = 0.1) {
+	constructor(shot: string, num: number,  duration = 1000, scale = 0.25) {
 		this.duration = duration;
 		this.names = [];
 		for (let i = 0; i < num; i++ ) {
@@ -48,7 +48,7 @@ export default class Shot {
 		if (index === this.cur || index < 0 || index >= this.shots.length) {
 			return;
 		}
-		console.log("cross fade " + this.cur + " == " + index);
+		//console.log("cross fade " + this.cur + " == " + index);
 
 		this.curShot  = this.shots[this.cur];
 		this.nextShot = this.shots[index];

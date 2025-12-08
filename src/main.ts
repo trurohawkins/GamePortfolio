@@ -28,24 +28,6 @@ class MainScene extends Phaser.Scene {
 	}
 
 	create() {
-		//const worldSize = 2000;
-		//this.scene.launch('Menu');
-		/*
-		this.input.keyboard.on('keydown-ESC', () => {
-			if (this.scene.isPaused('mainScene')) {
-				this.scene.resume('mainScene');
-				this.scene.stop('Menu');
-			} else {
-				this.scene.pause('mainScene');
-				this.scene.launch('Menu', {archive: this.archive});
-			}
-		});
-		*/
-	 /*
-	 this.keys = [Phaser.Input.Keyboard.KeyCodes.W, Phaser.Input.Keyboard.KeyCodes.S,   
-		Phaser.Input.Keyboard.KeyCodes.A, Phaser.Input.Keyboard.KeyCodes.D, Phaser.Input.Keyboard.KeyCodes.SPACE]    
-
-	*/
 		this.keys = {
 			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 			left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
@@ -87,8 +69,8 @@ class MainScene extends Phaser.Scene {
 			camera.setBounds(0, 0, worldSize-buffer, worldSize-buffer);
 			camera.startFollow(this.player, whipCam, 0.1, 0.1);
 		}
+	 	this.instructor = new Instructor(this)
 	
-		//const gloryCloud = new Cloud(this, 400, 1000, 'gloryDogs', this.player);
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 60, 1200, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
@@ -110,9 +92,11 @@ class MainScene extends Phaser.Scene {
 			}
 			if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
 				this.player.leftPressed()
+				this.instructor.turnPressed()
 			}
 			if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
 				this.player.rightPressed()
+				this.instructor.turnPressed()
 			}
 			this.player.update();
 			this.archive.update();
@@ -155,7 +139,7 @@ class MainScene extends Phaser.Scene {
 					},
 					onComplete: () => {
 						lightsOff = false;
-	 					this.instructor = new Instructor(this)
+						this.instructor.boostText()
 					}
 				});
 				/*
@@ -208,16 +192,6 @@ class MainScene extends Phaser.Scene {
 	private onResume() {
 		this.videos.forEach(video => video.resume());
 	}
-
-	private onResize(gameSize: Phaser.Structs.Size) {
-		this.doorLeft.width = gameSize.width/2;
-		this.doorLeft.height = gameSize.height;
-		
-		this.doorRight.width = gameSize.width/2;
-		this.doorRight.height = gameSize.height;
-		this.doorRight.x = gameSize.width/2;
-	}
-
 }
 
 const wrapper = document.getElementById('game-wrapper')!;

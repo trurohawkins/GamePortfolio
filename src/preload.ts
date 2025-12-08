@@ -5,12 +5,20 @@ export class PreloadScene extends Phaser.Scene {
 
 	preload() {
 		//this.load.image('player', '/assets/playerHead.png'); // path is relative to public root
+		this.welcome = document.getElementById('welcome')
+		this.load.on('progress', (value: number) => {
+			let string = "LOADING"
+			for (let i = 0; i < value * 5; i++) {
+				string += "."
+			}
+			this.welcome.textContent = string// `Loading... ${Math.round(value * 100)}%`;
+		});
 		this.load.spritesheet('player', 'assets/player.png', {
 			frameWidth: 32,
 			frameHeight: 32
 		});
 		this.load.image('planet', '/assets/planet.png');
-		this.load.image('background', '/assets/skyBG.png');
+		this.load.image('background', '/assets/mindBG.png');
 		this.load.image('space', '/assets/space.png');
 		this.load.image('pizza', '/assets/pizza.png');
 		this.load.video('gloryDogs', 'assets/trailers/gloryDogsTrailer.mp4');//, 'loadeddata', true, true);
@@ -36,7 +44,12 @@ export class PreloadScene extends Phaser.Scene {
 		}
 	}
 
+	update() {
+		console.log("loading")
+	}
+
 	create() {
 		this.scene.start('Menu');
+		this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
 	}
 }
