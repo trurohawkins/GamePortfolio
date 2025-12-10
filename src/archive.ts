@@ -38,6 +38,7 @@ export default class Archive {
 			Help the most people to WIN THE GLORY!
 		`;
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
+		gloryDogs.scale = 0.75
 		this.videos.push(gloryDogs);
 		this.shots.push(new Shot('gd', 5));
 

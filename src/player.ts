@@ -46,7 +46,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.setCollideWorldBounds(false);
 		const radius = Math.min(this.width, this.height) / 2;
 		this.body.setCircle(radius);
-		this.setDepth(1);
+		this.setDepth(4);
 
 		this.face = scene.add.sprite(x, y, 'player', 14);
 		this.face.setDepth(this.depth+1);

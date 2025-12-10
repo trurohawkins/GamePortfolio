@@ -10,7 +10,7 @@ import Instructor from './instructor';
 export const worldSize: number = 4500;
 const worldCam: boolean = false;
 //worldCam supdercedes whipCam
-const whipCam: boolean = false;
+const whipCam: boolean = true;
 let paused = false;
 let lightsOff: boolean = true;
 let turningOn: boolean = false;
@@ -40,7 +40,7 @@ class MainScene extends Phaser.Scene {
 		
 		//homeBase.setDisplaySize(600, 600);
 		this.space = this.physics.add.image(worldSize/2, worldSize/2, 'space');
-		this.space.setDepth(5);
+		this.space.setDepth(2);
 		this.homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'planet');
 		//this.homeBase.setScale(7);
 		const radius = Math.min(this.homeBase.height, this.homeBase.width)/2;
@@ -72,7 +72,7 @@ class MainScene extends Phaser.Scene {
 	 	this.instructor = new Instructor(this)
 	
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
-		this.clouds.push(new Cloud(this, 60, 1200, this.player, this.archive));
+		this.clouds.push(new Cloud(this, 60, 1000, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));

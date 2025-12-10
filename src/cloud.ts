@@ -13,15 +13,15 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 		const rad = Phaser.Math.DegToRad(angle);
 		const x = worldSize/2 + Math.cos(rad) * distance;
 		const y = worldSize/2 - Math.sin(rad) * distance;
-		super(scene, x, y, 'pizza');
+		super(scene, x, y, 'cloud');
 		this.scene = scene;
 		this.archive = archive;
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
-		this.setScale(7);
-		const radius = Math.min(this.width, this.height) / 3;
+		this.rotation = Phaser.Math.DegToRad(Phaser.Math.Between(0, 360))
+		const radius = Math.min(this.width, this.height) / 2;
 		this.body.setCircle(radius);
-		this.body.setOffset(15, 7);
+		this.body.setOffset(20, 20);
 
 		/*
 		this.video.video.addEventListener('loadedmetadata', () => {
@@ -49,18 +49,20 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 			//console.log("overlap end");
 		}
 		this.overlapping = curOverlap;
+		this.rotation += Phaser.Math.DegToRad(0.04);
 	}
 
 	public setVideo(file: VidFile) {
 		this.file = file;
 		this.video = this.scene.add.video(this.x, this.y, file.key);
+		this.video.setMute(true)
 		this.scene.videos.push(this.video);
 		this.video.setScale(file.scale);
 		this.video.setLoop(false);
 		this.video.video.loop = false;//setLoop(false);
 		this.video.video.playbackRate = 5;
 		this.video.video.addEventListener('ended', this.onVideoComplete.bind(this));
-		this.video.setDepth(0);
+		this.video.setDepth(3);
 		//this.setSize(this.video.displayWidth, this.video.displayHeight);
 	}
 

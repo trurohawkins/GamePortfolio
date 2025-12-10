@@ -39,13 +39,6 @@ export default class Instructor extends Phaser.GameObjects.Container {
 		if (!this.up) {
 			this.setBox("Press W\nto fly through the cosmos!!!")
 		}
-		this.scene.time.delayedCall(2000, () => {
-			if (this.player.watching) {
-				this.watchText()
-			} else {
-				this.turnText()
-			}
-		});
 	}
 
 	public watchText() {
@@ -91,6 +84,13 @@ export default class Instructor extends Phaser.GameObjects.Container {
 		} else {
 			this.up = true
 			this.resetBox()
+			this.scene.time.delayedCall(2000, () => {
+				if (this.player.watching) {
+					this.watchText()
+				} else {
+					this.turnText()
+				}
+			});
 		}
 	}
 
