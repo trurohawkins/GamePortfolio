@@ -139,6 +139,9 @@ class MainScene extends Phaser.Scene {
 					},
 					onComplete: () => {
 						lightsOff = false;
+						left.style.zIndex = "0"
+						right.style.zIndex = "0"
+						welcome.style.zIndex = "0"
 						this.instructor.boostText()
 					}
 				});

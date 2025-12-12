@@ -32,12 +32,18 @@ export default class Archive {
 	private curCloud?: cloud;
 	
 	constructor() {
-		const gdDesc = `
-			2 player browser based celular automata. 
-			Blast through space debris and rescue survivors
-			Help the most people to WIN THE GLORY!
-		`;
-		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, "GameMaker", "https://gamejolt.com/games/glorydogs/638631", "Midnight Dame");
+		const gdDesc = 
+			"Pilot a giant mecha and rescue human survivors from space debris.<br>Play with your friends to kill aliens, blow up obstacles and save people!<br>Help the most people to WIN THE GLORY!"
+		const gdTech = `
+			Procedurally generated fully destructuble and moving maps.<br>
+			Programmed in GML in Gamamaker. <br>Exported to HTML5 to run in the browser.
+		`
+		const gdTeam = `
+			Made with the Midnight Dame development team.<br>
+			Team Lead and Sprite Artist Eli Maki.<br>
+			Programming and Design Tru Hawkins.<br>
+		`
+		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, gdTech, "https://gamejolt.com/games/glorydogs/638631", gdTeam);
 		gloryDogs.scale = 0.75
 		this.videos.push(gloryDogs);
 		this.shots.push(new Shot('gd', 5));
@@ -135,13 +141,14 @@ export default class Archive {
 		}
 		const gameDescription = document.getElementById('gameDescription');
 		if (gameDescription) {
-			gameDescription.textContent = file.description;
+			//gameDescription.textContent = file.description;
+			gameDescription.innerHTML = "Description:<br>"+file.description;
 			gameDescription.className = 'block';
 			await wait(pause);
 		}
 		const technologies = document.getElementById('technologies');
 		if (technologies) {
-			technologies.textContent = file.tech;
+			technologies.innerHTML = "Technology:<br>"+file.tech;
 			technologies.className = 'block'; 
 			await wait(pause);
 		}
@@ -153,13 +160,13 @@ export default class Archive {
 		const gameLink = document.getElementById("gameLink") as HTMLAnchorElement;
 		if (gameLink) {
 			gameLink.textContent = "Game Page";
-			gameLink.href = file.gameLink;
+			gameLink.href = file.gameLink + "?fres"
 			gameLink.target = "_blank";
 			await wait(pause);
 		}
 		const collaborators = document.getElementById('collaborators');
 		if (collaborators) {
-			collaborators.textContent = file.collaborators;
+			collaborators.innerHTML = "Team:<br>"+file.collaborators;
 			collaborators.className = 'block'; 
 			await wait(pause);
 		}
