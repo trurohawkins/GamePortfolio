@@ -41,45 +41,52 @@ export default class Archive {
 		const gdTeam = `
 			Made with the Midnight Dame development team.<br>
 			Team Lead and Sprite Artist Eli Maki.<br>
-			Programming and Design Tru Hawkins.<br>
+			Programming Tru Hawkins.<br>
+			Design and concept by Tru Hawkins and Eli Maki
 		`
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, gdTech, "https://gamejolt.com/games/glorydogs/638631", gdTeam);
 		gloryDogs.scale = 0.4 
 		this.videos.push(gloryDogs);
 		this.shots.push(new Shot('gd', 5));
 
-		const stroidDesc = 
-			`
-			Mobile Game for Android. Fly around procedurally generated levels.
-			Collect pieces to customize your spaceship.
-			Mine valuable minerals to upgrade your ship.
-			Infinite level and upgrade scaling!
-			`
-		const stroidTeam =
+		const stroidDesc = `
+			Fly spaceship through procedurally generated levels.<br>
+			Collect pieces to customize your spaceship.<br>
+			Mine valuable minerals to upgrade your ship.<br>
+			Algorithmically infinite level and upgrade scaling!<br>
 		`
-		Programming and Design by Tru Hawkins
-		Artwork by Emma Fitzpatrick
-		Music by Gabe Zapata
+		const stroidTech = `
+			Mobile game developed for Android in Unity3D<br>
+			programmed in C#
 		`
-		const stroid = new VidFile("stroid", "Stroid", stroidDesc, "Unity", "_", stroidTeam);
+		const stroidTeam =`
+			Programming and Design by Tru Hawkins<br>
+			Artwork by Emma Fitzpatrick<br>
+			Music by Gabe Zapata<br>
+		`
+		const stroid = new VidFile("stroid", "Stroid", stroidDesc, stroidTech, "_", stroidTeam);
 		this.videos.push(stroid);
 		this.shots.push(new Shot('stroid', 6));
 
-		const tremblesDesc =
+		const tremblesDesc = `
+			Control a group of up to 10 miners<br>
+			Guide your little guys through worm infested ground.<br>
+			Collect valuable ores for points!<br>
+			Place the bomb to blow up the worm nest!<br>
+			And guide your team out to safety!
 		`
-		Made for GameJolt Week long Game Jam.
-		Based on the movie Tremors as per Game Jam theme.
-		Guide your miners to travel through worm infested ground.
-		Collect valuable ores and blow up the worm nest to win!
+		const tremblesTech = `
+			Made for GameJolt Week long Game Jam. <br>
+			Based on the movie Tremors as per Game Jam theme. <br>
+			Built in Unity3D using C#
 		`
-		const tremblesTeam =
+		const tremblesTeam = `
+			Design by Eli Maki and Tru Hawkins<br>
+			Programming by Tru Hawkins<br>
+			Artwork by Eli Maki<br>
+			Music by Gabe Zapata<br>
 		`
-		Design by Eli Maki and Tru Hawkins
-		Programming by Tru Hawkins
-		Artwork by Eli Maki
-		Music by Gabe Zapata
-		`
-		const trembles = new VidFile("trembles", "Trembles", tremblesDesc, "Unity", "https://gamejolt.com/games/trembles/729503", tremblesTeam);
+		const trembles = new VidFile("trembles", "Trembles", tremblesDesc, tremblesTech, "https://gamejolt.com/games/trembles/729503", tremblesTeam);
 		trembles.scale = 0.4;
 		this.videos.push(trembles);
 		this.shots.push(new Shot('trembles', 6));

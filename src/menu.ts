@@ -4,6 +4,7 @@ import Shot from './shot';
 export class Menu extends Phaser.Scene {
 	private paused = false;
 	private background!: Phaser.GameObjects.Rectangle;
+	private mainCreated = false;
 
 	constructor() {
 		super({ key: 'Menu' });
@@ -26,34 +27,43 @@ export class Menu extends Phaser.Scene {
 		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
 			this.onResize(gameSize)
 		});
-		const mainKey = 'MainScene';
-		import('./main').then(({ MainScene }) => {
-			this.scene.add(mainKey, MainScene, false);
-			this.scene.launch(mainKey, { archive: this.archive });
-			this.scene.bringToTop();
-			this.input.keyboard.on('keydown-ESC', () => {
-				const mainScene = this.scene.get(mainKey);
-				if (!mainScene) return;
-
-				this.paused = !this.paused;
-				if (this.paused) {
-					this.scene.pause(mainKey);
-					this.archive.showShots();
-					this.background.setAlpha(0.5);
-					this.selectShot(true)
-				} else {
-					this.scene.resume(mainKey);
-					this.archive.hideShots();
-					this.background.setAlpha(0);
-				}
-			});
-		});
 		this.keys = {
 			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 			down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
 		}
+		if (!this.mainCreated) {
+			this.mainCreated = true;
+			const mainKey = 'MainScene';
+			import('./main').then(({ MainScene }) => {
+				if (!this.scene.get(mainKey)) {
+					this.scene.add(mainKey, MainScene, false);
+				}
+				if (!this.scene.isActive(mainKey)) {
+					this.scene.launch(mainKey, { archive: this.archive });
+				} else {
+					console.warn("MaiN Scene is already active");
+				}
+				this.scene.bringToTop();
+				this.input.keyboard.on('keydown-ESC', () => {
+					const mainScene = this.scene.get(mainKey);
+					if (!mainScene) return;
 
-
+					this.paused = !this.paused;
+					if (this.paused) {
+						this.scene.pause(mainKey);
+						this.archive.showShots();
+						this.background.setAlpha(0.5);
+						this.selectShot(true)
+					} else {
+						this.scene.resume(mainKey);
+						this.archive.hideShots();
+						this.background.setAlpha(0);
+					}
+				});
+			});
+		} else {
+			console.warn("main scene already created")
+		}
 	}
 
 	private onResize(gameSize: Phaser.Structs.Size) {

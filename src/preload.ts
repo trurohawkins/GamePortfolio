@@ -1,10 +1,19 @@
 export class PreloadScene extends Phaser.Scene {
+	private static started = false;
+	private static menuLaunched = false;
+
 	constructor() {
 		super('preload');
 	}
 
 	preload() {
 		//this.load.image('player', '/assets/playerHead.png'); // path is relative to public root
+		if (PreloadScene.started) {
+			console.warn("preload preload run twice")
+			return;
+		}
+		PreloadScene.started = true
+		console.log("preload loading")
 		this.welcome = document.getElementById('welcome')
 		this.load.on('progress', (value: number) => {
 			let string = "LOADING"
@@ -51,6 +60,12 @@ export class PreloadScene extends Phaser.Scene {
 
 	create() {
 		//this.scene.start('Menu');
+		//
+		if (PreloadScene.menuLaunched) {
+			console.warn("preload create run twice")
+			return;
+		}
+		PreloadScene.menuLaunched = true;
 		import('./menu').then(({ Menu }) => {
 			this.scene.add('Menu', Menu, true);
 		});

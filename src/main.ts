@@ -223,4 +223,6 @@ const config: Phaser.Types.Core.GamesConfig = {
 	}
 };
 
-game = new Phaser.Game(config);
+if (!window.game) {
+	window.game = new Phaser.Game(config);
+}
