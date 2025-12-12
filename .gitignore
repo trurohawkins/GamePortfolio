@@ -1,0 +1,14 @@
+# Node dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs and temp
+*.logs
+.cache/
+
+# OS metadata
+.DS_Store
+Thumbs.db
