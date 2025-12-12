@@ -13,7 +13,8 @@ export class PreloadScene extends Phaser.Scene {
 			return;
 		}
 		PreloadScene.started = true
-		console.log("preload loading")
+		console.log("preload loading ding dong")
+		this.load.setBaseURL('/GamePortfolio/');
 		this.welcome = document.getElementById('welcome')
 		this.load.on('progress', (value: number) => {
 			let string = "LOADING"
@@ -26,10 +27,13 @@ export class PreloadScene extends Phaser.Scene {
 			frameWidth: 32,
 			frameHeight: 32
 		});
+		const planetPath = 'assets/planet.png'
+		const url = new URL(planetPath, window.location.href);
+		console.log('Resolved planet url: ', url.href)
 		this.load.image('planet', 'assets/planet.png');
+
 		this.load.image('background', 'assets/mindBG.png');
-		this.load.image('space', 'assets/space.png');
-		this.load.image('pizza', 'assets/pizza.png');
+		//this.load.image('space', 'assets/space.png');
 		this.load.image('cloud', 'assets/neuronCloud.png');
 		this.load.video('gloryDogs', 'assets/trailers/gloryDogsTrailer.mp4');//, 'loadeddata', true, true);
 		this.load.video('stroid', 'assets/trailers/StroidTrailer.mp4');
@@ -52,23 +56,49 @@ export class PreloadScene extends Phaser.Scene {
 		for (let i = 0; i < 5; i++) {
 			this.load.image('rohlb' + i, 'assets/gameScreenshots/rohlb'+i+'.png');
 		}
-	}
 
-	update() {
-		console.log("loading")
-	}
-
-	create() {
-		//this.scene.start('Menu');
-		//
-		if (PreloadScene.menuLaunched) {
-			console.warn("preload create run twice")
-			return;
-		}
-		PreloadScene.menuLaunched = true;
-		import('./menu').then(({ Menu }) => {
-			this.scene.add('Menu', Menu, true);
+		this.load.once('complete', () => {
+			console.log("loading complete pig pog")
+			PreloadScene.menuLaunched = true;
+			import('./menu').then(({ Menu }) => {
+				this.scene.add('Menu', Menu, true);
+			});
+			this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
+			console.log("checking planet")
+			const texture = this.textures.get('planet');
+			console.log("caca")
+			if (!texture) {
+				console.log("no texture for planet")
+			} else {
+				const img = texture.getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+				if (img) {
+					console.log('Planet size:', img.width, img.height);
+				} else {
+					console.log("no img on planet")
+				}
+			}
+			const texture2 = this.textures.get('space');
+			if (!texture2) {
+				console.log("no texture for space")
+			} else {
+				const img = texture2.getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+				if (img) {
+					console.log('space size:', img.width, img.height);
+				} else {
+					console.log("no img on planet")
+				}
+			}
+			const texture3 = this.textures.get('background');
+			if (!texture3) {
+				console.log("no texture for BG")
+			} else {
+				const img = texture3.getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+				if (img) {
+					console.log('bg size:', img.width, img.height);
+				} else {
+					console.log("no img on planet")
+				}
+			}
 		});
-		this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
 	}
 }

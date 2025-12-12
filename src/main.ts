@@ -40,8 +40,10 @@ export class MainScene extends Phaser.Scene {
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
 		
 		//homeBase.setDisplaySize(600, 600);
+		/*
 		this.space = this.physics.add.image(worldSize/2, worldSize/2, 'space');
 		this.space.setDepth(2);
+		*/
 		this.homeBase = this.physics.add.image(worldSize/2, worldSize/2, 'planet');
 		//this.homeBase.setScale(7);
 		const radius = Math.min(this.homeBase.height, this.homeBase.width)/2;
@@ -85,7 +87,7 @@ export class MainScene extends Phaser.Scene {
 
 	update() {
 		if (!lightsOff) {
-			if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+			if (Phaser.Input.Keyboard.JustDown(this.keys.up) || this.input.pointer1.isDown) {
 				if (this.instructor) {
 					this.instructor.upPressed()
 				}
@@ -120,45 +122,34 @@ export class MainScene extends Phaser.Scene {
 				}
 			}
 		} else {
-			if (!turningOn && Phaser.Input.Keyboard.JustDown(this.keys.boost)) {
-				turningOn = true;
-				lightsOff = false;
-				const left = document.getElementById('doorLeft');
-				const right = document.getElementById('doorRight');
-				const welcome = document.getElementById('welcome');
-				let dummy = {progress: 0};
-				this.tweens.add({
-					targets: dummy,
-					progress: 100,
-					duration: 1500,
-					ease: 'Expo.inOut',
-					onUpdate: () => {
-						const value = dummy.progress;
-						left.style.transform = `translateX(${-value}%)`;
-						right.style.transform = `translateX(${value}%)`;
-						welcome.style.opacity = 1 - value;
-					},
-					onComplete: () => {
-						lightsOff = false;
-						left.style.zIndex = "0"
-						right.style.zIndex = "0"
-						welcome.style.zIndex = "0"
-						this.instructor.boostText()
-					}
-				});
-				/*
-				this.tweens.add({
-					targets: [this.doorLeft, this.doorRight],
-					x: (target: Phaser.GameObjects.Rectangle) => {
-						return target == this.doorLeft ? -target.width : this.scale.width;
-					},
-					duration: 1500,
-					ease: 'Expo.inOut',
-					onComplete: () => {
-						this.doorsOpen();
-					}
-				});
-				*/
+			if (!turningOn) {
+				if (Phaser.Input.Keyboard.JustDown(this.keys.boost) || this.input.pointer1.isDown) {
+					turningOn = true;
+					lightsOff = false;
+					const left = document.getElementById('doorLeft');
+					const right = document.getElementById('doorRight');
+					const welcome = document.getElementById('welcome');
+					let dummy = {progress: 0};
+					this.tweens.add({
+						targets: dummy,
+						progress: 100,
+						duration: 1500,
+						ease: 'Expo.inOut',
+						onUpdate: () => {
+							const value = dummy.progress;
+							left.style.transform = `translateX(${-value}%)`;
+							right.style.transform = `translateX(${value}%)`;
+							welcome.style.opacity = 1 - value;
+						},
+						onComplete: () => {
+							lightsOff = false;
+							left.style.zIndex = "0"
+							right.style.zIndex = "0"
+							welcome.style.zIndex = "0"
+							this.instructor.boostText()
+						}
+					});
+				}
 			}
 		}
 
