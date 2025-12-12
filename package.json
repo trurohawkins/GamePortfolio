@@ -5,17 +5,16 @@
   "main": "index.js",
   "scripts": {
 		"dev": "vite",
-		"build": "tsc"
+		"build": "vite build",
+		"preview": "vite preview",
+		"deploy": "gh-pages -d dist",
+		"predeploy": "npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
 	"homepage": "https://trurohawkins.github.io/GamePortfolio/",
-	"scripts": {
-		"deploy": "gh-pages -d dist",
-		"predeploy": "npm run build"
-	},
   "dependencies": {
     "phaser": "^3.88.2"
   },
