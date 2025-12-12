@@ -11,28 +11,28 @@ html, body {
 
 @font-face {
     font-family: 'Orbitron';
-    src: url('/assets/fonts/Orbitron-Regular.ttf') format('truetype');
+    src: url('assets/fonts/Orbitron-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url('/assets/fonts/Roboto-Light.ttf') format('truetype');
+    src: url('assets/fonts/Roboto-Light.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'SUSEMono';
-    src: url('/assets/fonts/SUSEMono-Regular.ttf') format('truetype');
+    src: url('assets/fonts/SUSEMono-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'ShareTechMono';
-    src: url('/assets/fonts/ShareTechMono-Regular.ttf') format('truetype');
+    src: url('assets/fonts/ShareTechMono-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
