@@ -50,7 +50,10 @@ export class PreloadScene extends Phaser.Scene {
 	}
 
 	create() {
-		this.scene.start('Menu');
+		//this.scene.start('Menu');
+		import('./menu').then(({ Menu }) => {
+			this.scene.add('Menu', Menu, true);
+		});
 		this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
 	}
 }

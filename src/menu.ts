@@ -22,36 +22,37 @@ export class Menu extends Phaser.Scene {
 		this.curShot = 0;
 		this.preShot = 4;
 		this.placeShots()
-		/*
-		for (let i = 0; i < this.numShots; i++) {
-			this.archive.placeShot(i, this.scale.width/2, this.spacing * i);
-		}
-		*/
 		this.selectShot(true)
 		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
 			this.onResize(gameSize)
 		});
-		this.scene.launch('mainScene', {archive: this.archive});
-		this.scene.bringToTop();
-		this.input.keyboard.on('keydown-ESC', () => {
-			//this.scene.stop();
-			//this.scene.resume('mainScene');
-			this.paused = !this.paused;
-			if (this.paused) {
-				this.scene.pause('mainScene');
-				this.archive.showShots();
-				this.background.setAlpha(0.5);
-				this.selectShot(true)
-			} else {
-				this.scene.resume('mainScene');
-				this.archive.hideShots();
-				this.background.setAlpha(0);
-			}
+		const mainKey = 'MainScene';
+		import('./main').then(({ MainScene }) => {
+			this.scene.add(mainKey, MainScene, false);
+			this.scene.launch(mainKey, { archive: this.archive });
+			this.scene.bringToTop();
+			this.input.keyboard.on('keydown-ESC', () => {
+				const mainScene = this.scene.get(mainKey);
+				if (!mainScene) return;
+
+				this.paused = !this.paused;
+				if (this.paused) {
+					this.scene.pause(mainKey);
+					this.archive.showShots();
+					this.background.setAlpha(0.5);
+					this.selectShot(true)
+				} else {
+					this.scene.resume(mainKey);
+					this.archive.hideShots();
+					this.background.setAlpha(0);
+				}
+			});
 		});
 		this.keys = {
 			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 			down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
 		}
+
 
 	}
 

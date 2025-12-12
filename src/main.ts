@@ -1,7 +1,7 @@
 import './style.css';
 import Phaser from 'phaser';
 import {PreloadScene} from './preload';
-import {Menu} from './menu';
+//import {Menu} from './menu';
 import Player from './player';
 import Archive from './archive';
 import Cloud from './cloud';
@@ -16,7 +16,7 @@ let paused = false;
 let lightsOff: boolean = true;
 let turningOn: boolean = false;
 
-class MainScene extends Phaser.Scene {
+export class MainScene extends Phaser.Scene {
 	
 	private player!: Player;
 	private clouds: Cloud[] = [];
@@ -25,7 +25,7 @@ class MainScene extends Phaser.Scene {
 	private instructor!: Instructor;
 
 	constructor() {
-		super({key: 'mainScene'});
+		super({key: 'MainScene'});
 	}
 
 	create() {
@@ -217,7 +217,7 @@ const config: Phaser.Types.Core.GamesConfig = {
 				false
 		}
 	},
-	scene: [PreloadScene, Menu, MainScene],
+	scene: [PreloadScene],
 	audio: {
 		disableWebAudio: false
 	}
