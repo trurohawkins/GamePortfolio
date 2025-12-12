@@ -1,3 +1,4 @@
+import './style.css';
 import Phaser from 'phaser';
 import {PreloadScene} from './preload';
 import {Menu} from './menu';
@@ -10,7 +11,7 @@ import Instructor from './instructor';
 export const worldSize: number = 4500;
 const worldCam: boolean = false;
 //worldCam supdercedes whipCam
-const whipCam: boolean = true;
+const whipCam: boolean = false;
 let paused = false;
 let lightsOff: boolean = true;
 let turningOn: boolean = false;
@@ -217,16 +218,9 @@ const config: Phaser.Types.Core.GamesConfig = {
 		}
 	},
 	scene: [PreloadScene, Menu, MainScene],
+	audio: {
+		disableWebAudio: false
+	}
 };
 
 game = new Phaser.Game(config);
-/*
-window.addEventListener('resize', () => {
-	const wrapper = document.getElementById('game-wrapper')!;
-	const width = wrapper.clientWidth;
-	const height = wrapper.clientHeight;
-	console.log(width + ", " + height);
-	game.scale.resize(width, height);
-});
-*/
-

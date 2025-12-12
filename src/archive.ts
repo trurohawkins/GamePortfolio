@@ -44,7 +44,7 @@ export default class Archive {
 			Programming and Design Tru Hawkins.<br>
 		`
 		const gloryDogs = new VidFile("gloryDogs", "GloryDogs", gdDesc, gdTech, "https://gamejolt.com/games/glorydogs/638631", gdTeam);
-		gloryDogs.scale = 0.75
+		gloryDogs.scale = 0.4 
 		this.videos.push(gloryDogs);
 		this.shots.push(new Shot('gd', 5));
 
@@ -80,7 +80,7 @@ export default class Archive {
 		Music by Gabe Zapata
 		`
 		const trembles = new VidFile("trembles", "Trembles", tremblesDesc, "Unity", "https://gamejolt.com/games/trembles/729503", tremblesTeam);
-		trembles.scale = 0.5;
+		trembles.scale = 0.4;
 		this.videos.push(trembles);
 		this.shots.push(new Shot('trembles', 6));
 
