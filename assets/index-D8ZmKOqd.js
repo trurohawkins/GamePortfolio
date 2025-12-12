@@ -6352,7 +6352,7 @@ return new `+this.key+`();
 			Made with the Midnight Dame development team.<br>
 			Team Lead and Sprite Artist Eli Maki.<br>
 			Programming and Design Tru Hawkins.<br>
-		`,st=new Ft("gloryDogs","GloryDogs",k,$,"https://gamejolt.com/games/glorydogs/638631",rt);st.scale=.75,this.videos.push(st),this.shots.push(new Rt("gd",5));const ot=`
+		`,st=new Ft("gloryDogs","GloryDogs",k,$,"https://gamejolt.com/games/glorydogs/638631",rt);st.scale=.4,this.videos.push(st),this.shots.push(new Rt("gd",5));const ot=`
 			Mobile Game for Android. Fly around procedurally generated levels.
 			Collect pieces to customize your spaceship.
 			Mine valuable minerals to upgrade your ship.
@@ -6371,7 +6371,7 @@ return new `+this.key+`();
 		Programming by Tru Hawkins
 		Artwork by Eli Maki
 		Music by Gabe Zapata
-		`,c=new Ft("trembles","Trembles",t,"Unity","https://gamejolt.com/games/trembles/729503",d);c.scale=.5,this.videos.push(c),this.shots.push(new Rt("trembles",6));const h=`
+		`,c=new Ft("trembles","Trembles",t,"Unity","https://gamejolt.com/games/trembles/729503",d);c.scale=.4,this.videos.push(c),this.shots.push(new Rt("trembles",6));const h=`
 		Run around chugging beer and peeing on people!
 		You are the life of the party!
 		Just don't stop peeing or drinking beer!
