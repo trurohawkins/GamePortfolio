@@ -6352,7 +6352,7 @@ return new `+this.key+`();
 			Made with the Midnight Dame development team.<br>
 			Team Lead and Sprite Artist Eli Maki.<br>
 			Programming and Design Tru Hawkins.<br>
-		`,st=new Ft("gloryDogs","GloryDogs",k,$,"https://gamejolt.com/games/glorydogs/638631",rt);st.scale=.4,this.videos.push(st),this.shots.push(new Rt("gd",5));const ot=`
+		`,st=new Ft("gloryDogs","GloryDogs",k,$,"https://gamejolt.com/games/glorydogs/638631",rt);st.scale=.2,this.videos.push(st),this.shots.push(new Rt("gd",5));const ot=`
 			Mobile Game for Android. Fly around procedurally generated levels.
 			Collect pieces to customize your spaceship.
 			Mine valuable minerals to upgrade your ship.
