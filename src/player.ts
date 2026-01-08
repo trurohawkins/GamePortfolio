@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
-	private boost: number = 500;
+	private boost: number = 250;
 	private boostPause: number = 80;
 	private boostPauseCounter: number = 0;
 	private accelMax: number = 1500;
@@ -17,7 +17,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 	private rotSpd = 0;
 	private rotMax = 3
-	private rotAccel = 0.1;
+	private rotAccel = 0.06;
 	private rotDecel = 0.005;
 
 	// when we stop inputting for rotation we pause be for drifting back to planet rotation
@@ -29,8 +29,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	public watching: boolean = false;
 
 	private upPress: boolean = false;
-	private leftPress: boolean = false;
-	private rightPress: boolean = false;
+	public leftPress: boolean = false;
+	public rightPress: boolean = false;
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, 'player');
@@ -63,12 +63,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	update() {
 		if (this.watching) {
 				return;
-		}
-		if (this.leftPress) {
-			this.leftPress = false
-		}
-		if (this.rightPress) {
-			this.rightPress = false
 		}
 		if (!this.leftPress && !this.rightPress) {
 			if (this.rotSpd != 0) {
@@ -176,6 +170,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
+	public leftReleased() {
+		this.leftPress = false;
+	}
+
 	public rightPressed() {
 		if (this.watching) {
 			this.stopWatching()
@@ -188,6 +186,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 			this.rightPress = true
 		}
+	}
+	
+	public rightReleased() {
+		this.rightPress = false;
 	}
 
 	private createAnimations() {

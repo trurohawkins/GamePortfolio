@@ -63,7 +63,11 @@ export class PreloadScene extends Phaser.Scene {
 			import('./menu').then(({ Menu }) => {
 				this.scene.add('Menu', Menu, true);
 			});
-			this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
+			if (this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0) {
+				this.welcome.innerHTML = "WELCOME<br><br>Tap Screen to Enter"
+			} else {
+				this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
+			}
 			console.log("checking planet")
 			const texture = this.textures.get('planet');
 			console.log("caca")

@@ -15,6 +15,9 @@ const whipCam: boolean = false;
 let paused = false;
 let lightsOff: boolean = true;
 let turningOn: boolean = false;
+const deadZone = 10
+let tilted = 0
+let controlsOn = false;
 
 export class MainScene extends Phaser.Scene {
 	
@@ -72,7 +75,7 @@ export class MainScene extends Phaser.Scene {
 			camera.setBounds(0, 0, worldSize-buffer, worldSize-buffer);
 			camera.startFollow(this.player, whipCam, 0.1, 0.1);
 		}
-	 	this.instructor = new Instructor(this)
+	 	this.instructor = new Instructor(this, this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0)
 	
 		this.clouds.push(new Cloud(this, 90, 500, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 60, 1000, this.player, this.archive));
@@ -87,19 +90,34 @@ export class MainScene extends Phaser.Scene {
 
 	update() {
 		if (!lightsOff) {
-			if (Phaser.Input.Keyboard.JustDown(this.keys.up) || this.input.pointer1.isDown) {
-				if (this.instructor) {
-					this.instructor.upPressed()
-				}
-				this.player.upPressed()
-			}
-			if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
-				this.player.leftPressed()
-				this.instructor.turnPressed()
-			}
-			if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
-				this.player.rightPressed()
-				this.instructor.turnPressed()
+			if (controlsOn) {
+					if (this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0) {
+ 						if (this.input.pointer1.isDown) {
+							if (this.instructor) {
+								this.instructor.upPressed()
+							}
+							this.player.upPressed()
+						}
+					} else {
+						if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+							if (this.instructor) {
+								this.instructor.upPressed()
+							}
+							this.player.upPressed()
+						}
+						if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
+							this.leftPress()
+						}
+						if (!this.keys.left.isDown && this.player.leftPress) {
+							this.player.leftReleased()
+						}
+						if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
+							this.rightPress()
+						}
+						if (!this.keys.right.isDown && this.player.rightPress) {
+							this.player.rightReleased()
+						}
+					}
 			}
 			this.player.update();
 			this.archive.update();
@@ -124,6 +142,7 @@ export class MainScene extends Phaser.Scene {
 		} else {
 			if (!turningOn) {
 				if (Phaser.Input.Keyboard.JustDown(this.keys.boost) || this.input.pointer1.isDown) {
+					this.enableMotion();
 					turningOn = true;
 					lightsOff = false;
 					const left = document.getElementById('doorLeft');
@@ -137,6 +156,9 @@ export class MainScene extends Phaser.Scene {
 						ease: 'Expo.inOut',
 						onUpdate: () => {
 							const value = dummy.progress;
+							if (value > 0.75) {
+								controlsOn = true;
+							}
 							left.style.transform = `translateX(${-value}%)`;
 							right.style.transform = `translateX(${value}%)`;
 							welcome.style.opacity = 1 - value;
@@ -153,6 +175,10 @@ export class MainScene extends Phaser.Scene {
 			}
 		}
 
+	}
+
+	public hasMotion() {
+		return 'DeviceOrientationEvent' in window || 'DeviceMotionEvent' in window; 
 	}
 
 	openDoors() {
@@ -176,7 +202,72 @@ export class MainScene extends Phaser.Scene {
 			banner.className = "banner";
 		}
 		lightsOff = false;
+	}
 
+	async enableMotion() {
+		if (
+			typeof DeviceMotionEvent !== 'undefined' &&
+			typeof (DeviceMotionEvent as any).requestPermission === 'function'
+		) {
+			const permission = await (DeviceMotionEvent as any).requestPermission();
+			if (permission !== 'granted') {
+				console.warn('Motion Permision denied');
+				return;
+			}
+		}
+		window.addEventListener('deviceorientation', this.handleOrientation);
+		window.addEventListener('deviceorientationabsolute', this.handleOrientation);
+	}
+
+	handleOrientation = (event: DeviceOrientationEvent) => {
+		let landscape = this.checkLandscape()//window.innerWidth > window.innerHeight
+		const gamma = parseInt(event.gamma ?? 0);
+		const beta = parseInt(event.beta ?? 0);
+		let tilt = landscape ? beta : gamma;
+		let newTilt = 0
+		if (tilt < -deadZone) {
+			newTilt = -1;
+		} else if (tilt > deadZone) {
+			newTilt = 1;
+		} 
+		if (tilted != newTilt) {
+			if (newTilt == -1) {
+				this.leftPress()
+			} else if (newTilt == 1) {
+				this.rightPress()
+			} else {
+				if (tilted == -1) {
+					this.player.leftReleased()
+				} else if (tilted == 1) {
+					this.player.rightReleased()
+				}
+			}
+			tilted = newTilt
+		}
+	}
+
+	public checkLandscape() {
+    if (screen.orientation && screen.orientation.type) {
+        return screen.orientation.type.startsWith("landscape");
+    }
+    if (window.matchMedia("(orientation: landscape)").matches) {
+        return true;
+    }
+    if (typeof window.orientation !== "undefined") {
+        return Math.abs(window.orientation as number) === 90;
+    }
+    // fallback: compare width/height
+    return window.innerWidth > window.innerHeight;
+	}
+
+	private leftPress() {
+		this.player.leftPressed()
+		this.instructor.turnPressed()
+	}
+
+	private rightPress() {
+		this.player.rightPressed()
+		this.instructor.turnPressed()
 	}
 
 	private onPause() {

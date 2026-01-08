@@ -6,10 +6,12 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	private watched: boolean = false
 	private watchUp: boolean = false
 	private bgAlpha: number = 0.3
+	private mobile: boolean = false
 
-	constructor(scene: Phaser.Scene) {
+	constructor(scene: Phaser.Scene, onMobile: boolean) {
 		super(scene, 0, 0)
 		this.player = scene.player
+		this.mobile = onMobile
 		//this.scene = scene
 		const cam = scene.cameras.main
 		this.cam = cam
@@ -37,20 +39,36 @@ export default class Instructor extends Phaser.GameObjects.Container {
 
 	public boostText() {
 		if (!this.up) {
-			this.setBox("Press W\nto fly through the cosmos!!!")
+			if (this.mobile) {
+				this.setBox("Tap Screen\nto fly through the cosmos!!!")
+			} else {
+				this.setBox("Press W\nto fly through the cosmos!!!")
+			}
 		}
 	}
 
 	public watchText() {
 		if (!this.watched) {
-			this.setBox("Press W, A, or D to stop watching")
+			if (this.mobile) {
+				this.setBox("tap screen or tilt device\n to stop watching")
+			} else {
+				this.setBox("Press W, A, or D to stop watching")
+			}
 			this.watchUp = true
 		}
 	}
 
+	public testText(text: string) {
+		this.setBox(text);
+	}
+
 	private turnText() {
 		if (!this.turn) {
-			this.setBox("Press A and D to turn!!!")
+			if (this.mobile) {
+				this.setBox("Tilt device to turn!!!")
+			} else {
+				this.setBox("Press A and D to turn!!!")
+			}
 		}
 	}
 
