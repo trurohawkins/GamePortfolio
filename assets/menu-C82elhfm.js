@@ -1,0 +1,55 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/index-BvSodj-C.js","assets/phaser-BOgQtUoh.js","assets/index-sL9AK7YX.css"])))=>i.map(i=>d[i]);
+var T=Object.defineProperty;var E=(h,t,e)=>t in h?T(h,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):h[t]=e;var i=(h,t,e)=>E(h,typeof t!="symbol"?t+"":t,e);import{_ as M}from"./index-BvSodj-C.js";import"./phaser-BOgQtUoh.js";class u{constructor(t,e,s=1e3,n=.25){i(this,"container");i(this,"shots",[]);i(this,"cur",0);i(this,"fade",1e4);i(this,"playing",!1);i(this,"scene");i(this,"pause",120);i(this,"curPause",0);i(this,"curShot");i(this,"nextShot");this.duration=s,this.names=[];for(let o=0;o<e;o++)this.names.push(t+o);this.scale=n}addToScene(t){this.scene=t,this.container=t.add.container(0,0),this.names.forEach((e,s)=>{const n=t.add.sprite(0,0,e);n.setAlpha(0),n.setDepth(1e3),n.setTint(8421504),this.container.add(n),this.shots.push(n)}),this.container.setScale(this.scale)}highlight(t){this.shots.forEach(e=>{t?e.setTint(16777215):e.setTint(8421504)})}crossFadeTo(t){t===this.cur||t<0||t>=this.shots.length||(this.curShot=this.shots[this.cur],this.nextShot=this.shots[t],this.scene.tweens.add({targets:this.curShot,alpha:0,duration:this.duration,onComplete:()=>{this.curShot.alpha=0}}),this.scene.tweens.add({targets:this.nextShot,alpha:1,duration:this.duration,onComplete:()=>{this.curPause=0}}),this.cur=t)}play(){this.playing=!0,this.shots[this.cur].setAlpha(1),this.curPause=0}hide(){this.playing=!1,this.scene.tweens.killTweensOf(this.curShot),this.scene.tweens.killTweensOf(this.nextShot);for(let t=0;t<this.shots.length;t++)this.shots[t].setAlpha(0)}update(){this.curPause<this.pause&&(this.curPause++,this.curPause==this.pause&&this.crossFadeTo((this.cur+1)%this.shots.length))}}function c(h){return new Promise(t=>setTimeout(t,h))}class m{constructor(t,e,s,n,o,a){i(this,"key");i(this,"title");i(this,"tech");i(this,"gameLink");i(this,"collaborators");i(this,"scale",1);this.key=t,this.title=e,this.description=s,this.tech=n,this.gameLink=o,this.collaborators=a}}class P{constructor(){i(this,"videos",[]);i(this,"shots",[]);i(this,"cur",0);i(this,"curCloud");const t="Pilot a giant mecha and rescue human survivors from space debris.<br>Play with your friends to kill aliens, blow up obstacles and save people!<br>Help the most people to WIN THE GLORY!",e=`
+			Procedurally generated fully destructuble and moving maps.<br>
+			Programmed in GML in Gamamaker. <br>Exported to HTML5 to run in the browser.
+		`,s=`
+			Made with the Midnight Dame development team.<br>
+			Team Lead and Sprite Artist Eli Maki.<br>
+			Programming Tru Hawkins.<br>
+			Design and concept by Tru Hawkins and Eli Maki
+		`,n=new m("gloryDogs","GloryDogs",t,e,"https://gamejolt.com/games/glorydogs/638631",s);n.scale=.4,this.videos.push(n),this.shots.push(new u("gd",5));const o=`
+			Fly spaceship through procedurally generated levels.<br>
+			Collect pieces to customize your spaceship.<br>
+			Mine valuable minerals to upgrade your ship.<br>
+			Algorithmically infinite level and upgrade scaling!<br>
+		`,a=`
+			Mobile game developed for Android in Unity3D<br>
+			programmed in C#
+		`,d=`
+			Programming and Design by Tru Hawkins<br>
+			Artwork by Emma Fitzpatrick<br>
+			Music by Gabe Zapata<br>
+		`,p=new m("stroid","Stroid",o,a,"_",d);this.videos.push(p),this.shots.push(new u("stroid",6));const r=`
+			Control a group of up to 10 miners<br>
+			Guide your little guys through worm infested ground.<br>
+			Collect valuable ores for points!<br>
+			Place the bomb to blow up the worm nest!<br>
+			And guide your team out to safety!
+		`,l=`
+			Made for GameJolt Week long Game Jam. <br>
+			Based on the movie Tremors as per Game Jam theme. <br>
+			Built in Unity3D using C#
+		`,b=`
+			Design by Eli Maki and Tru Hawkins<br>
+			Programming by Tru Hawkins<br>
+			Artwork by Eli Maki<br>
+			Music by Gabe Zapata<br>
+		`,g=new m("trembles","Trembles",r,l,"https://gamejolt.com/games/trembles/729503",b);g.scale=.4,this.videos.push(g),this.shots.push(new u("trembles",6));const y=`
+		Run around chugging beer and peeing on people!
+		You are the life of the party!
+		Just don't stop peeing or drinking beer!
+		`,f=`
+		Design by Acie Schiff and Tru Hawkins
+		Programming by Tru Hawkins
+		Artwork by Tru Hawkins
+		Music by Brandon Mckie and Tru Hawkins
+		`,w=new m("peepeeMadness","PeePee Madness",y,"Unity","https://trugames.itch.io/peepee-madness",f);this.videos.push(w),this.shots.push(new u("pp",4));const S=`
+		Mobile game where you control 1 of 3 chubby buddies.
+		Roll them through 5 maze levels to get them home saafely.
+		Collect candy to speed up and get the best time possible!
+		Won best Mobile Game Award at CSU Chico.
+		`,k=`
+		Design by Tru Hawkins and Sarah Vaughn
+		Programming by Tru Hawkins
+		Artwork by Sarah Vaughn
+		`,v=new m("ROHLB","Roll On Home Little Buddy",S,"Unity","_",k);this.videos.push(v),this.shots.push(new u("rohlb",5))}setVidInfoIndex(t,e){this.setVidInfo(this.videos[t],e)}async setVidInfo(t,e){const s=document.getElementById("left-panel");s&&(s.style.backgroundColor="#333");const n=document.getElementById("right-panel");n&&(n.style.backgroundColor="#333");const o=document.getElementById("gameTitle");o&&(o.textContent=t.title,o.className="block",await c(e));const a=document.getElementById("gameDescription");a&&(a.innerHTML="Description:<br>"+t.description,a.className="block",await c(e));const d=document.getElementById("technologies");d&&(d.innerHTML="Technology:<br>"+t.tech,d.className="block",await c(e));const p=document.getElementById("page");p&&(p.className="block",await c(e));const r=document.getElementById("gameLink");r&&(r.textContent="Game Page",r.href=t.gameLink+"?fres",r.target="_blank",await c(e));const l=document.getElementById("collaborators");l&&(l.innerHTML="Team:<br>"+t.collaborators,l.className="block",await c(e))}playVideo(t){this.curCloud!==void 0&&(this.curCloud.video.stop(),this.curCloud.resetVideo()),this.curCloud=t,t.video.setVisible(!0),t.video.play(!1)}getVideo(){const t=this.videos[this.cur];return this.cur=(this.cur+1)%this.videos.length,t}addShotsToScene(t){for(let e=0;e<this.shots.length;e++)this.shots[e].addToScene(t)}placeShot(t,e,s){t>=0&&t<this.shots.length&&(this.shots[t].container.x=e,this.shots[t].container.y=s)}highlightShot(t,e){this.shots[t].highlight(e)}showShots(){for(let t=0;t<this.shots.length;t++)this.shots[t].play()}hideShots(){for(let t=0;t<this.shots.length;t++)this.shots[t].hide()}update(){for(let t=0;t<this.shots.length;t++)this.shots[t].playing&&this.shots[t].update()}}class I extends Phaser.Scene{constructor(){super({key:"Menu"});i(this,"paused",!1);i(this,"background");i(this,"mainCreated",!1)}create(){this.background=this.add.rectangle(0,0,this.scale.width,this.scale.height,0,1).setOrigin(0),this.background.setAlpha(0),this.archive=new P,this.add.existing(this.archive),this.archive.addShotsToScene(this),this.buffer=120,this.spacing=290,this.numShots=5,this.displayShots=3,this.curShot=0,this.preShot=4,this.placeShots(),this.selectShot(!0),this.scale.on("resize",e=>{this.onResize(e)}),this.keys={up:this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),down:this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)},this.mainCreated?console.warn("main scene already created"):(this.mainCreated=!0,this.mainKey="MainScene",M(async()=>{const{MainScene:e}=await import("./index-BvSodj-C.js").then(s=>s.m);return{MainScene:e}},__vite__mapDeps([0,1,2])).then(({MainScene:e})=>{var s;this.scene.get(this.mainKey)||this.scene.add(this.mainKey,e,!1),this.mainScene=this.scene.get(this.mainKey),console.log("creating main scene"),this.scene.isActive(this.mainKey)?console.warn("MaiN Scene is already active"):this.scene.launch(this.mainKey,{archive:this.archive}),this.setupMotionUnlock(),this.scene.bringToTop(),this.input.keyboard.on("keydown-ESC",()=>{this.togglePause()}),(s=document.getElementById("menu"))==null||s.addEventListener("click",()=>{this.togglePause()})}))}setupMotionUnlock(){if(!(this.sys.game.device.os.mobile||navigator.maxTouchPoints>0)){this.mainScene.motionOk=!0;return}this.welcome=document.getElementById("welcome"),this.game.canvas,document.getElementById("doorLeft"),document.getElementById("doorRight"),document.getElementById("layout");const e=document.createElement("div");e.style.position="absolute",e.style.top="0",e.style.left="0",e.style.width="100%",e.style.height="100%",e.style.zIndex="1000000",e.style.background="transparent",document.body.appendChild(e);const s=n=>{typeof DeviceMotionEvent<"u"&&typeof DeviceMotionEvent.requestPermission=="function"?DeviceMotionEvent.requestPermission().then(o=>{o==="granted"?(this.mainScene.motionOk=!0,window.addEventListener("deviceorientation",this.mainScene.handleOrientation)):console.warn("Motion permission denied"),e==null||e.removeEventListener("touchstart",s),e==null||e.removeEventListener("mousedown",s),e!=null&&e.parentElement&&document.body.removeChild(e)}).catch(o=>{console.log(o)}):(this.mainScene.motionOk=!0,window.addEventListener("deviceorientation",this.mainScene.handleOrientation),e==null||e.removeEventListener("touchstart",s),e==null||e.removeEventListener("mousedown",s),e!=null&&e.parentElement&&document.body.removeChild(e),this.mainScene.instructor.testText("cacapoopoo"))};e==null||e.addEventListener("mousedown",s,{once:!0}),e==null||e.addEventListener("touchstart",s,{once:!0})}async enableMotion(){if(typeof DeviceMotionEvent<"u"&&typeof DeviceMotionEvent.requestPermission=="function"&&(this.welcome.innerHTML="sent request",await DeviceMotionEvent.requestPermission()!=="granted")){this.welcome.innerHTML="not granted",console.warn("Motion Permision denied");return}this.welcome.innerHTML="got tilt permission",window.addEventListener("deviceorientation",this.mainScene.handleOrientation),window.addEventListener("deviceorientationabsolute",this.mainScene.handleOrientation),this.mainScene.motionOk=!0}togglePause(){this.scene.get(this.mainKey)&&(this.paused=!this.paused,this.paused?(this.scene.pause(this.mainKey),this.archive.showShots(),this.background.setAlpha(.5),this.selectShot(!0)):(this.scene.resume(this.mainKey),this.archive.hideShots(),this.background.setAlpha(0)))}onResize(e){this.background.width=e.width,this.background.height=e.height,this.placeShots()}placeShots(){for(let e=0;e<this.numShots;e++){const s=(this.preShot+e)%this.numShots;e<this.displayShots?this.archive.placeShot(s,this.scale.width/2,this.buffer+this.spacing*e):this.archive.placeShot(s,99999,99999)}}update(){this.archive.update(),this.paused&&(Phaser.Input.Keyboard.JustDown(this.keys.up)&&this.move(-1),Phaser.Input.Keyboard.JustDown(this.keys.down)&&this.move(1))}move(e){this.selectShot(!1),this.curShot=this.incNum(this.curShot,e),this.preShot=this.incNum(this.preShot,e),this.selectShot(!0),this.placeShots()}incNum(e,s){return s>0?e=(e+1)%this.numShots:e+s>=0?e+=s:e=this.numShots-1,e}selectShot(e){this.archive.highlightShot(this.curShot,e),this.paused&&this.archive.setVidInfoIndex(this.curShot,0)}}export{I as Menu};
