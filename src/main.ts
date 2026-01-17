@@ -15,8 +15,8 @@ const whipCam: boolean = false;
 let paused = false;
 let lightsOff: boolean = true;
 let turningOn: boolean = false;
-const deadZone = 10
-let tilted = 0
+const deadZone = 5 
+let curTilt = 0
 let controlsOn = false;
 
 export class MainScene extends Phaser.Scene {
@@ -88,7 +88,7 @@ export class MainScene extends Phaser.Scene {
 		this.archive = data.archive;
 	}
 
-	update() {
+	update(time: number, delta: number) {
 		if (!lightsOff) {
 			if (controlsOn) {
 					if (this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0) {
@@ -119,7 +119,7 @@ export class MainScene extends Phaser.Scene {
 						}
 					}
 			}
-			this.player.update();
+			this.player.update(time, delta);
 			this.archive.update();
 			for (let i = 0; i < this.clouds.length; i++) {
 				this.clouds[i].update();
@@ -219,30 +219,34 @@ export class MainScene extends Phaser.Scene {
 		window.addEventListener('deviceorientationabsolute', this.handleOrientation);
 	}
 
+
 	handleOrientation = (event: DeviceOrientationEvent) => {
 		let landscape = this.checkLandscape()//window.innerWidth > window.innerHeight
 		const gamma = parseInt(event.gamma ?? 0);
 		const beta = parseInt(event.beta ?? 0);
-		let tilt = landscape ? beta : gamma;
-		let newTilt = 0
-		if (tilt < -deadZone) {
-			newTilt = -1;
-		} else if (tilt > deadZone) {
-			newTilt = 1;
-		} 
-		if (tilted != newTilt) {
-			if (newTilt == -1) {
-				this.leftPress()
-			} else if (newTilt == 1) {
-				this.rightPress()
-			} else {
-				if (tilted == -1) {
+		let maxTilt = landscape ? 45 : 60;
+		let gyro = landscape ? beta : gamma;
+		let tiltVal = Math.abs(gyro) / maxTilt
+		let direction = 0
+		if (gyro < -deadZone) {
+			direction = -1;
+		} else if (gyro > deadZone) {
+			direction = 1;
+		}
+		let tilt = tiltVal * direction;
+		if (curTilt != tilt) {
+			if (tilt === 0) {// || Math.sign(tilt) != Math.sign(curTilt)) {
+				if (curTilt < 0) {
 					this.player.leftReleased()
-				} else if (tilted == 1) {
+				} else if (curTilt > 0) {
 					this.player.rightReleased()
 				}
+			} else {
+				//this.instructor.testText("setting to " + tiltVal + " " + direction);
+				this.player.setRotation(tiltVal, direction);
+				this.instructor.testText("rot speed " + this.player.rotSpd);
 			}
-			tilted = newTilt
+			curTilt = tilt;
 		}
 	}
 

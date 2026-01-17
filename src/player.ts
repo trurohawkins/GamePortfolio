@@ -2,23 +2,25 @@ import Phaser from 'phaser';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 
-	private boost: number = 250;
+	private boost: number = 600;
 	private boostPause: number = 80;
 	private boostPauseCounter: number = 0;
+	private boostPauseDecel: number = 100;
 	private accelMax: number = 1500;
 	private accel: number = 0;
-	private decel: number = 5;
+	private decel: number = 200;
 
 	private gravity: number = 500;
-	private gravAccel: number = 1;
+	private gravAccel: number = 100;
 	private pull: number = 0;
 	private grounded: boolean = false;
 	private home?: Phaser.Physics.Arcade.Image;
 
 	private rotSpd = 0;
-	private rotMax = 3
-	private rotAccel = 0.06;
-	private rotDecel = 0.005;
+	private rotMax = 20;
+	private phoneRotMax = 10;
+	private rotAccel = 4;
+	private rotDecel = 20;
 
 	// when we stop inputting for rotation we pause be for drifting back to planet rotation
 	private rotInput: number = 0;
@@ -60,25 +62,28 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		};
 	}
 
-	update() {
+	update(time: number, delta: number) {
+		const dt = Math.min(delta, 50) / 1000;
+		//console.log("delta: " + delta + " dt: " + dt);
 		if (this.watching) {
 				return;
 		}
 		if (!this.leftPress && !this.rightPress) {
 			if (this.rotSpd != 0) {
 				let dir = Math.sign(this.rotSpd);
-				if (Math.abs(this.rotSpd) - this.rotDecel > 0) {
-					this.rotSpd -= dir * this.rotDecel;
+				let decel = this.rotDecel * dt;
+				if (Math.abs(this.rotSpd) - decel > 0) {
+					this.rotSpd -= dir * decel;
 				} else {
 					this.rotSpd = 0;
 				}
 			}
 		}
 		if (this.rotSpd != 0) {
-			this.rotation += this.rotSpd;
+			this.rotation += this.rotSpd * dt;
 		} else {
 			if (this.rotInput > 0) {
-				this.rotInput--;
+				this.rotInput -= dt;
 			} else {
 				// rotate towards home
 				let angle = Phaser.Math.Angle.Between(this.x, this.y, this.home.x, this.home.y);
@@ -92,10 +97,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		} else {
 			//console.log(this.boostPauseCounter + " -- " + this.accel + " < " + (this.accelMax * 0.5));
 			if (this.boostPauseCounter > 0) {
-				this.boostPauseCounter--;
+				this.boostPauseCounter -= this.boostPauseDecel * dt;
 			} else {
-				if (this.accel - this.decel > 0) {
-					this.accel -= this.decel;
+				let decel = this.decel * dt;
+				if (this.accel - decel > 0) {
+					this.accel -= decel;
 					if (this.accel < this.accelMax * 0.4) {
 						if (this.anims.currentAnim?.key === 'boosted') {
 							this.play('slowing');
@@ -115,8 +121,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 		} else {
 			this.grounded = false;
-			if (this.pull + this.gravAccel < this.gravity) {
-				this.pull += this.gravAccel;
+			let g = this.gravAccel * dt;
+			if (this.pull + g < this.gravity) {
+				this.pull += g;
 			} else {
 				this.pull = this.gravity;//Phaser.Math.Linear(0, this.gravity, 1-curAccel);
 			}
@@ -153,6 +160,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 			this.pull = 0;
 			this.upPress = true
+		}
+	}
+
+	public setRotation(rotVal: number, direction: number) {
+		if (this.watching) {
+			this.stopWatching();
+		} else if (direction != 0) { 
+			this.rotSpd = Phaser.Math.Linear(this.rotAccel, this.phoneRotMax, rotVal) * direction;
 		}
 	}
 

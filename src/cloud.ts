@@ -55,7 +55,7 @@ export default class Cloud extends Phaser.Physics.Arcade.Sprite {//Phaser.GameOb
 	public setVideo(file: VidFile) {
 		this.file = file;
 		this.video = this.scene.add.video(this.x, this.y, file.key);
-		//this.video.setMute(true)
+		this.video.setMute(true)
 		this.scene.videos.push(this.video);
 		this.video.setScale(file.scale);
 		this.video.setLoop(false);

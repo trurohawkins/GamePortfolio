@@ -33,36 +33,43 @@ export class Menu extends Phaser.Scene {
 		}
 		if (!this.mainCreated) {
 			this.mainCreated = true;
-			const mainKey = 'MainScene';
+			this.mainKey = 'MainScene';
 			import('./main').then(({ MainScene }) => {
-				if (!this.scene.get(mainKey)) {
-					this.scene.add(mainKey, MainScene, false);
+				if (!this.scene.get(this.mainKey)) {
+					this.scene.add(this.mainKey, MainScene, false);
 				}
-				if (!this.scene.isActive(mainKey)) {
-					this.scene.launch(mainKey, { archive: this.archive });
+				if (!this.scene.isActive(this.mainKey)) {
+					this.scene.launch(this.mainKey, { archive: this.archive });
 				} else {
 					console.warn("MaiN Scene is already active");
 				}
 				this.scene.bringToTop();
 				this.input.keyboard.on('keydown-ESC', () => {
-					const mainScene = this.scene.get(mainKey);
-					if (!mainScene) return;
-
-					this.paused = !this.paused;
-					if (this.paused) {
-						this.scene.pause(mainKey);
-						this.archive.showShots();
-						this.background.setAlpha(0.5);
-						this.selectShot(true)
-					} else {
-						this.scene.resume(mainKey);
-						this.archive.hideShots();
-						this.background.setAlpha(0);
-					}
+					this.togglePause();
+				});
+				document.getElementById("menu")?.addEventListener("click", () => {
+					this.togglePause();
 				});
 			});
 		} else {
 			console.warn("main scene already created")
+		}
+	}
+
+	private togglePause() {
+		const mainScene = this.scene.get(this.mainKey);
+		if (!mainScene) return;
+
+		this.paused = !this.paused;
+		if (this.paused) {
+			this.scene.pause(this.mainKey);
+			this.archive.showShots();
+			this.background.setAlpha(0.5);
+			this.selectShot(true)
+		} else {
+			this.scene.resume(this.mainKey);
+			this.archive.hideShots();
+			this.background.setAlpha(0);
 		}
 	}
 

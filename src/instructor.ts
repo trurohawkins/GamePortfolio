@@ -7,6 +7,7 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	private watchUp: boolean = false
 	private bgAlpha: number = 0.3
 	private mobile: boolean = false
+	private teach: boolean = false
 
 	constructor(scene: Phaser.Scene, onMobile: boolean) {
 		super(scene, 0, 0)
@@ -38,6 +39,9 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	}
 
 	public boostText() {
+		if (!this.teach) {
+			return;
+		}
 		if (!this.up) {
 			if (this.mobile) {
 				this.setBox("Tap Screen\nto fly through the cosmos!!!")
@@ -48,6 +52,9 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	}
 
 	public watchText() {
+		if (!this.teach) {
+			return;
+		}
 		if (!this.watched) {
 			if (this.mobile) {
 				this.setBox("tap screen or tilt device\n to stop watching")
@@ -63,6 +70,9 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	}
 
 	private turnText() {
+		if (!this.teach) {
+			return;
+		}
 		if (!this.turn) {
 			if (this.mobile) {
 				this.setBox("Tilt device to turn!!!")
