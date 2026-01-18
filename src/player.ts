@@ -18,7 +18,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 	private rotSpd = 0;
 	private rotMax = 20;
-	private phoneRotMax = 10;
+	private phoneRotMax = 5;
 	private rotAccel = 4;
 	private rotDecel = 20;
 

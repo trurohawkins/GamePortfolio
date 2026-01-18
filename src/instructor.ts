@@ -7,7 +7,7 @@ export default class Instructor extends Phaser.GameObjects.Container {
 	private watchUp: boolean = false
 	private bgAlpha: number = 0.3
 	private mobile: boolean = false
-	private teach: boolean = false
+	private teach: boolean = true
 
 	constructor(scene: Phaser.Scene, onMobile: boolean) {
 		super(scene, 0, 0)

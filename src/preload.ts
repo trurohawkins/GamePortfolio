@@ -68,9 +68,7 @@ export class PreloadScene extends Phaser.Scene {
 			} else {
 				this.welcome.innerHTML = "WELCOME!<br><br>Press Space to Enter"
 			}
-			console.log("checking planet")
 			const texture = this.textures.get('planet');
-			console.log("caca")
 			if (!texture) {
 				console.log("no texture for planet")
 			} else {
@@ -105,4 +103,5 @@ export class PreloadScene extends Phaser.Scene {
 			}
 		});
 	}
+
 }

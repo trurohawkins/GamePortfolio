@@ -38,11 +38,14 @@ export class Menu extends Phaser.Scene {
 				if (!this.scene.get(this.mainKey)) {
 					this.scene.add(this.mainKey, MainScene, false);
 				}
+				this.mainScene = this.scene.get(this.mainKey) as MainScene;
+				console.log("creating main scene")
 				if (!this.scene.isActive(this.mainKey)) {
 					this.scene.launch(this.mainKey, { archive: this.archive });
 				} else {
 					console.warn("MaiN Scene is already active");
 				}
+				this.setupMotionUnlock();
 				this.scene.bringToTop();
 				this.input.keyboard.on('keydown-ESC', () => {
 					this.togglePause();
@@ -54,6 +57,84 @@ export class Menu extends Phaser.Scene {
 		} else {
 			console.warn("main scene already created")
 		}
+	}
+
+	private setupMotionUnlock() {
+		this.welcome = document.getElementById('welcome')
+		console.log("setting up motion unlock")
+		if (!(this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0)) {
+			this.mainScene.motionOk = true;
+			return;
+		}
+		const canvas = this.game.canvas;
+		if (
+				typeof DeviceMotionEvent !== 'undefined' &&
+				typeof (DeviceMotionEvent as any).requestPermission === 'function'
+			) {
+				const overlay = document.createElement('div');
+				overlay.style.position = 'fixed';
+				overlay.style.top = '0';
+				overlay.style.left = '0';
+				overlay.style.width = '100vw';
+				overlay.style.height = '100vh';
+				overlay.style.zIndex = '9999999'; // above canvas
+				overlay.style.background = 'transparent';
+				overlay.style.pointerEvents = 'all';
+				document.body.appendChild(overlay);	
+				const unlock = (event: Event) => {
+					event.stopPropagation();
+					event.preventDefault();
+
+					(DeviceMotionEvent as any).requestPermission().then((permission: string) => {
+						if (permission === 'granted') {
+							this.mainScene.motionOk = true;
+							window.addEventListener('deviceorientation', this.mainScene.handleOrientation);
+						} else {
+							console.warn("Motion permission denied");
+						}
+						// Remove overlay after requestPermission() completes
+						overlay?.removeEventListener("touchstart", unlock);
+						overlay?.removeEventListener("mousedown", unlock);
+						if (overlay?.parentElement) document.body.removeChild(overlay);
+						requestAnimationFrame(() => {
+							// Reset Phaser pointer state
+							this.input.manager.pointers.forEach(p => {
+									p.isDown = false;
+									p.primaryDown = false;
+									p.downTime = 0;
+							});	
+						});
+					}).catch((err)=> {
+						console.log(err);
+					});
+				};
+				overlay?.addEventListener("mousedown", unlock, { once: true });
+				overlay?.addEventListener("touchstart", unlock, { once: true });
+			} else {
+				console.log("android")
+				// Non-iOS or already allowed
+				this.mainScene.motionOk = true;
+				window.addEventListener('deviceorientation', this.mainScene.handleOrientation);
+			}
+	}
+
+	async enableMotion() {
+		if (
+			typeof DeviceMotionEvent !== 'undefined' &&
+			typeof (DeviceMotionEvent as any).requestPermission === 'function'
+		) {
+			this.welcome.innerHTML = "sent request"
+			const permission = await (DeviceMotionEvent as any).requestPermission();
+			if (permission !== 'granted') {
+				this.welcome.innerHTML = "not granted";
+				console.warn('Motion Permision denied');
+				return;
+			}
+		}
+		this.welcome.innerHTML = "got tilt permission"
+		window.addEventListener('deviceorientation', this.mainScene.handleOrientation);
+		window.addEventListener('deviceorientationabsolute', this.mainScene.handleOrientation);
+		this.mainScene.motionOk = true;
 	}
 
 	private togglePause() {

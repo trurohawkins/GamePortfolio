@@ -18,6 +18,7 @@ let turningOn: boolean = false;
 const deadZone = 5 
 let curTilt = 0
 let controlsOn = false;
+let touchActive = false;
 
 export class MainScene extends Phaser.Scene {
 	
@@ -26,6 +27,7 @@ export class MainScene extends Phaser.Scene {
 	public videos: Phaser.GameObjects.Video[] = [];
 	private archive!: Archive;
 	private instructor!: Instructor;
+	public motionOk = false;
 
 	constructor() {
 		super({key: 'MainScene'});
@@ -82,6 +84,19 @@ export class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
+		/*
+		this.input.on('pointerdown', () => {
+				touchActive = true;
+		});
+
+		this.input.on('pointerup', () => {
+				touchActive = false;
+		});
+
+		this.input.on('pointercancel', () => {
+				touchActive = false;
+		});
+		*/
 	}
 
 	init(data: Archive) {
@@ -90,9 +105,16 @@ export class MainScene extends Phaser.Scene {
 
 	update(time: number, delta: number) {
 		if (!lightsOff) {
+			/*
+			if (!controlsOn) {
+				if (!touchActive) {//!this.input.pointer1.isDown) {
+					controlsOn = true;
+				}
+			}
+			*/
 			if (controlsOn) {
 					if (this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0) {
- 						if (this.input.pointer1.isDown) {
+ 						if (touchActive || this.input.pointer1.isDown) {
 							if (this.instructor) {
 								this.instructor.upPressed()
 							}
@@ -140,10 +162,8 @@ export class MainScene extends Phaser.Scene {
 				}
 			}
 		} else {
-			if (!turningOn) {
+			if (!turningOn && this.motionOk) {
 				if (Phaser.Input.Keyboard.JustDown(this.keys.boost) || this.input.pointer1.isDown) {
-					this.enableMotion();
-					turningOn = true;
 					lightsOff = false;
 					const left = document.getElementById('doorLeft');
 					const right = document.getElementById('doorRight');
@@ -156,14 +176,12 @@ export class MainScene extends Phaser.Scene {
 						ease: 'Expo.inOut',
 						onUpdate: () => {
 							const value = dummy.progress;
-							if (value > 0.75) {
-								controlsOn = true;
-							}
 							left.style.transform = `translateX(${-value}%)`;
 							right.style.transform = `translateX(${value}%)`;
 							welcome.style.opacity = 1 - value;
 						},
 						onComplete: () => {
+							controlsOn = true;
 							lightsOff = false;
 							left.style.zIndex = "0"
 							right.style.zIndex = "0"
@@ -179,10 +197,6 @@ export class MainScene extends Phaser.Scene {
 
 	public hasMotion() {
 		return 'DeviceOrientationEvent' in window || 'DeviceMotionEvent' in window; 
-	}
-
-	openDoors() {
-
 	}
 
 	doorsOpen() {
@@ -204,23 +218,10 @@ export class MainScene extends Phaser.Scene {
 		lightsOff = false;
 	}
 
-	async enableMotion() {
-		if (
-			typeof DeviceMotionEvent !== 'undefined' &&
-			typeof (DeviceMotionEvent as any).requestPermission === 'function'
-		) {
-			const permission = await (DeviceMotionEvent as any).requestPermission();
-			if (permission !== 'granted') {
-				console.warn('Motion Permision denied');
-				return;
-			}
-		}
-		window.addEventListener('deviceorientation', this.handleOrientation);
-		window.addEventListener('deviceorientationabsolute', this.handleOrientation);
-	}
-
-
 	handleOrientation = (event: DeviceOrientationEvent) => {
+		if (!controlsOn) {
+			return;
+		}
 		let landscape = this.checkLandscape()//window.innerWidth > window.innerHeight
 		const gamma = parseInt(event.gamma ?? 0);
 		const beta = parseInt(event.beta ?? 0);
@@ -244,7 +245,8 @@ export class MainScene extends Phaser.Scene {
 			} else {
 				//this.instructor.testText("setting to " + tiltVal + " " + direction);
 				this.player.setRotation(tiltVal, direction);
-				this.instructor.testText("rot speed " + this.player.rotSpd);
+				this.instructor.turnPressed();
+				//this.instructor.testText("rot speed " + this.player.rotSpd);
 			}
 			curTilt = tilt;
 		}

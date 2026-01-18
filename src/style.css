@@ -223,10 +223,13 @@ body {
 	justify-content: center;
 	align-items: center;
 	background: black;
+
+	pointer-events: auto;
 }
 
 canvas {
 	display: block;
+	pointer-events: all;
 }
 
 #doorLeft, #doorRight {
@@ -236,7 +239,8 @@ canvas {
 	width: 50vw;
 	background-color: black;
 	z-index: 9999;
-	transition: transform is ease-in-out;
+	transition: transform 0.3s ease-in-out;
+	pointer-events: auto;
 }
 
 #doorLeft {
