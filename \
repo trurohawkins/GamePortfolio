@@ -13,7 +13,12 @@ const worldCam: boolean = false;
 //worldCam supdercedes whipCam
 const whipCam: boolean = false;
 let paused = false;
+let lightsOff: boolean = true;
 let turningOn: boolean = false;
+const deadZone = 5 
+let curTilt = 0
+let controlsOn = false;
+let touchActive = false;
 
 export class MainScene extends Phaser.Scene {
 	
@@ -24,15 +29,22 @@ export class MainScene extends Phaser.Scene {
 	private instructor!: Instructor;
 	public motionOk = false;
 
-	public menu: Menu;
-	public lightsOff: boolean = true;
-	public controlsOn: boolean = false;
+	private startX: number = 0;
+	private startY: number = 0;
+	private startTime: number = 0;
+	private moved: boolean = false;
 
 	constructor() {
 		super({key: 'MainScene'});
 	}
 
 	create() {
+		this.keys = {
+			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+			left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+			right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+			boost: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+		};
 		this.events.on('pause', this.onPause, this);
 		this.events.on('resume', this.onResume, this);
 	 	this.add.tileSprite(0, 0, worldSize+100, worldSize+100, 'background').setOrigin(0);
@@ -77,6 +89,19 @@ export class MainScene extends Phaser.Scene {
 		this.clouds.push(new Cloud(this, 180, 700, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 0, 800, this.player, this.archive));
 		this.clouds.push(new Cloud(this, 270, 600, this.player, this.archive));
+		/*
+		this.input.on('pointerdown', () => {
+				touchActive = true;
+		});
+
+		this.input.on('pointerup', () => {
+				touchActive = false;
+		});
+
+		this.input.on('pointercancel', () => {
+				touchActive = false;
+		});
+		*/
 	}
 
 	init(data: Archive) {
@@ -84,7 +109,43 @@ export class MainScene extends Phaser.Scene {
 	}
 
 	update(time: number, delta: number) {
-		if (!this.lightsOff) {
+		if (!lightsOff) {
+			/*
+			if (!controlsOn) {
+				if (!touchActive) {//!this.input.pointer1.isDown) {
+					controlsOn = true;
+				}
+			}
+			*/
+			if (controlsOn) {
+					if (this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0) {
+ 						if (touchActive || this.input.pointer1.isDown) {
+							if (this.instructor) {
+								this.instructor.upPressed()
+							}
+							this.player.upPressed()
+						}
+					} else {
+						if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
+							if (this.instructor) {
+								this.instructor.upPressed()
+							}
+							this.player.upPressed()
+						}
+						if (Phaser.Input.Keyboard.JustDown(this.keys.left)) {
+							this.leftPress()
+						}
+						if (!this.keys.left.isDown && this.player.leftPress) {
+							this.player.leftReleased()
+						}
+						if (Phaser.Input.Keyboard.JustDown(this.keys.right)) {
+							this.rightPress()
+						}
+						if (!this.keys.right.isDown && this.player.rightPress) {
+							this.player.rightReleased()
+						}
+					}
+			}
 			this.player.update(time, delta);
 			this.archive.update();
 			for (let i = 0; i < this.clouds.length; i++) {
@@ -105,20 +166,18 @@ export class MainScene extends Phaser.Scene {
 					cam.scrollY += ay;
 				}
 			}
-		} 
+		} else {
+			if (this.motionOk) {
+				if (Phaser.Input.Keyboard.JustDown(this.keys.boost) || this.input.pointer1.isDown) {
+					this.startGame();
+				}
+			}
+		}
+
 	}
 
-	public upPress() {
-		if (this.controlsOn && !this.lightsOff) {
-			if (this.instructor) {
-				this.instructor.upPressed()
-			}
-			this.player.upPressed()
-		}
-	}
-	
 	public startGame() {
-		this.lightsOff = false;
+		lightsOff = false;
 		const left = document.getElementById('doorLeft');
 		const right = document.getElementById('doorRight');
 		const welcome = document.getElementById('welcome');
@@ -135,8 +194,8 @@ export class MainScene extends Phaser.Scene {
 				welcome.style.opacity = 1 - value;
 			},
 			onComplete: () => {
-				this.controlsOn = true;
-				this.lightsOff = false;
+				controlsOn = true;
+				lightsOff = false;
 				left.style.zIndex = "0"
 				right.style.zIndex = "0"
 				welcome.style.zIndex = "0"
@@ -165,22 +224,65 @@ export class MainScene extends Phaser.Scene {
 		if (banner) {
 			banner.className = "banner";
 		}
-		this.lightsOff = false;
+		lightsOff = false;
 	}
 
-
-	public leftPress() {
-		if (this.controlsOn && !this.lightsOff) {
-			this.player.leftPressed()
-			this.instructor.turnPressed()
+	handleOrientation = (event: DeviceOrientationEvent) => {
+		if (!controlsOn) {
+			return;
+		}
+		let landscape = this.checkLandscape()//window.innerWidth > window.innerHeight
+		const gamma = parseInt(event.gamma ?? 0);
+		const beta = parseInt(event.beta ?? 0);
+		let maxTilt = landscape ? 45 : 60;
+		let gyro = landscape ? beta : gamma;
+		let tiltVal = Math.abs(gyro) / maxTilt
+		let direction = 0
+		if (gyro < -deadZone) {
+			direction = -1;
+		} else if (gyro > deadZone) {
+			direction = 1;
+		}
+		let tilt = tiltVal * direction;
+		if (curTilt != tilt) {
+			if (tilt === 0) {// || Math.sign(tilt) != Math.sign(curTilt)) {
+				if (curTilt < 0) {
+					this.player.leftReleased()
+				} else if (curTilt > 0) {
+					this.player.rightReleased()
+				}
+			} else {
+				//this.instructor.testText("setting to " + tiltVal + " " + direction);
+				this.player.setRotation(tiltVal, direction);
+				this.instructor.turnPressed();
+				//this.instructor.testText("rot speed " + this.player.rotSpd);
+			}
+			curTilt = tilt;
 		}
 	}
 
-	public rightPress() {
-		if (this.controlsOn && !this.lightsOff) {
-			this.player.rightPressed()
-			this.instructor.turnPressed()
-		}
+	public checkLandscape() {
+    if (screen.orientation && screen.orientation.type) {
+        return screen.orientation.type.startsWith("landscape");
+    }
+    if (window.matchMedia("(orientation: landscape)").matches) {
+        return true;
+    }
+    if (typeof window.orientation !== "undefined") {
+        return Math.abs(window.orientation as number) === 90;
+    }
+    // fallback: compare width/height
+    return window.innerWidth > window.innerHeight;
+	}
+
+	private leftPress() {
+		this.player.leftPressed()
+		this.instructor.turnPressed()
+	}
+
+	private rightPress() {
+		this.player.rightPressed()
+		this.instructor.turnPressed()
 	}
 
 	private onPause() {

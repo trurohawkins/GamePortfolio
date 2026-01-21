@@ -1,10 +1,12 @@
 import Archive from './archive';
 import Shot from './shot';
+import Controller from './controller';
 
 export class Menu extends Phaser.Scene {
 	private paused = false;
 	private background!: Phaser.GameObjects.Rectangle;
 	private mainCreated = false;
+	private control: Controller;
 
 	constructor() {
 		super({ key: 'Menu' });
@@ -27,10 +29,11 @@ export class Menu extends Phaser.Scene {
 		this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
 			this.onResize(gameSize)
 		});
+		/*
 		this.keys = {
 			up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
 			down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-		}
+		}*/
 		if (!this.mainCreated) {
 			this.mainCreated = true;
 			this.mainKey = 'MainScene';
@@ -39,17 +42,15 @@ export class Menu extends Phaser.Scene {
 					this.scene.add(this.mainKey, MainScene, false);
 				}
 				this.mainScene = this.scene.get(this.mainKey) as MainScene;
+				this.mainScene.menu = this;
 				console.log("creating main scene")
 				if (!this.scene.isActive(this.mainKey)) {
 					this.scene.launch(this.mainKey, { archive: this.archive });
 				} else {
 					console.warn("MaiN Scene is already active");
 				}
-				this.setupMotionUnlock();
 				this.scene.bringToTop();
-				this.input.keyboard.on('keydown-ESC', () => {
-					this.togglePause();
-				});
+				this.control = new Controller(this, this.mainScene);
 				document.getElementById("menu")?.addEventListener("click", () => {
 					this.togglePause();
 				});
@@ -57,65 +58,6 @@ export class Menu extends Phaser.Scene {
 		} else {
 			console.warn("main scene already created")
 		}
-	}
-
-	private setupMotionUnlock() {
-		this.welcome = document.getElementById('welcome')
-		console.log("setting up motion unlock")
-		if (!(this.sys.game.device.os.mobile || navigator.maxTouchPoints > 0)) {
-			this.mainScene.motionOk = true;
-			return;
-		}
-		const canvas = this.game.canvas;
-		if (
-				typeof DeviceMotionEvent !== 'undefined' &&
-				typeof (DeviceMotionEvent as any).requestPermission === 'function'
-			) {
-				const overlay = document.createElement('div');
-				overlay.style.position = 'fixed';
-				overlay.style.top = '0';
-				overlay.style.left = '0';
-				overlay.style.width = '100vw';
-				overlay.style.height = '100vh';
-				overlay.style.zIndex = '9999999'; // above canvas
-				overlay.style.background = 'transparent';
-				overlay.style.pointerEvents = 'all';
-				document.body.appendChild(overlay);	
-				const unlock = (event: Event) => {
-					event.stopPropagation();
-					event.preventDefault();
-
-					(DeviceMotionEvent as any).requestPermission().then((permission: string) => {
-						if (permission === 'granted') {
-							this.mainScene.motionOk = true;
-							window.addEventListener('deviceorientation', this.mainScene.handleOrientation);
-						} else {
-							console.warn("Motion permission denied");
-						}
-						// Remove overlay after requestPermission() completes
-						overlay?.removeEventListener("touchstart", unlock);
-						overlay?.removeEventListener("mousedown", unlock);
-						if (overlay?.parentElement) document.body.removeChild(overlay);
-						requestAnimationFrame(() => {
-							// Reset Phaser pointer state
-							this.input.manager.pointers.forEach(p => {
-									p.isDown = false;
-									p.primaryDown = false;
-									p.downTime = 0;
-							});	
-						});
-					}).catch((err)=> {
-						console.log(err);
-					});
-				};
-				overlay?.addEventListener("mousedown", unlock, { once: true });
-				overlay?.addEventListener("touchstart", unlock, { once: true });
-			} else {
-				console.log("android")
-				// Non-iOS or already allowed
-				this.mainScene.motionOk = true;
-				window.addEventListener('deviceorientation', this.mainScene.handleOrientation);
-			}
 	}
 
 	async enableMotion() {
@@ -173,14 +115,9 @@ export class Menu extends Phaser.Scene {
 	}
 
 	update() {
-		this.archive.update();
-		if (this.paused) {
-			if (Phaser.Input.Keyboard.JustDown(this.keys.up)) {
-				this.move(-1)
-			}
-			if (Phaser.Input.Keyboard.JustDown(this.keys.down)) {
-				this.move(1)
-			}
+		if (this.archive && this.control) {
+			this.archive.update();
+			this.control.update();
 		}
 	}
 
